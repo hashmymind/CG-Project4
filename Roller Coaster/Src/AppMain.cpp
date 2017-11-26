@@ -4,6 +4,8 @@
 #include "Track.H"
 #include <math.h>
 #include <time.h>
+#include<iostream>
+
 
 AppMain* AppMain::Instance = NULL;
 AppMain::AppMain(QWidget *parent)
@@ -21,6 +23,12 @@ AppMain::AppMain(QWidget *parent)
 	this->trainview->track = 0;
 	this->trainview->curve = 0;
 	this->trainview->isrun = false;
+    this->trainview->t_time = 0;
+
+    // Timer.
+    timer = new QTimer(this);
+    this->timer->start(20);
+    connect(timer, SIGNAL(timeout()), this, SLOT(TrainRun()));
 
 	setWindowTitle( "Roller Coaster" );
 
@@ -280,23 +288,9 @@ void AppMain::ChangeTrackType( QString type )
 static unsigned long lastRedraw = 0;
 void AppMain::SwitchPlayAndPause()
 {
-	if( !this->trainview->isrun )
-	{
-		ui.bPlay->setIcon(QIcon(":/AppMain/Resources/Icons/play.ico"));
-		this->trainview->isrun = !this->trainview->isrun;
-	}
-	else
-	{
-		ui.bPlay->setIcon(QIcon(":/AppMain/Resources/Icons/pause.ico"));
-		this->trainview->isrun = !this->trainview->isrun;
-	}
-	if(this->trainview->isrun){
-		if (clock() - lastRedraw > CLOCKS_PER_SEC/30) {
-			lastRedraw = clock();
-			this->advanceTrain();
-			this->damageMe();
-		}
-	}
+	this->trainview->isrun = !(this->trainview->isrun);
+	ui.bPlay->setIcon(!this->trainview->isrun ? QIcon(":/AppMain/Resources/Icons/play.ico") : QIcon(":/AppMain/Resources/Icons/pause.ico"));
+    std::cout << (this->trainview->isrun ? "Run\n" : "Stop\n");
 }
 
 void AppMain::ChangeSpeedOfTrain( int val )
@@ -456,6 +450,12 @@ void AppMain::UpdateTrackState( int index )
 	ui.aTrack->setChecked( (index==1)?true:false );
 	ui.aRoad ->setChecked( (index==2)?true:false );
 }
+void AppMain::TrainRun() {
+    if (this->trainview->isrun) {
+        this->advanceTrain();
+        this->damageMe();
+    }
+}
 
 //************************************************************************
 //
@@ -479,7 +479,9 @@ void AppMain::
 advanceTrain(float dir)
 //========================================================================
 {
-	//#####################################################################
-	// TODO: make this work for your train
-	//#####################################################################
+    this->trainview->t_time += (dir / m_Track.points.size() / (trainview->DIVIDE_LINE));
+    //std::cout << this->trainview->t_time << "\n";
+    if (trainview->t_time > 1.0f) {
+        trainview->t_time -= 1.0f;
+    }
 }

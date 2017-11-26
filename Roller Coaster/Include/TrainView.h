@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TRAINVIEW_H  
 #define TRAINVIEW_H
 #include <QtOpenGL/QGLWidget> 
@@ -12,8 +13,6 @@
 #include "Track.H"
 class AppMain;
 class CTrack;
-
-#define DIVIDE_LINE 100
 
 enum spline_t {
     spline_Linear,
@@ -61,7 +60,8 @@ private:
     inline Pnt3f Cardinal(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t);
     inline Pnt3f Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t);
     void drawTrack(bool);
-    void drawTrain(float);
+    void drawTrain();
+    void trainCamView(float);
 
 public:
 	ArcBallCam		arcball;			// keep an ArcBall for the UI
@@ -73,6 +73,8 @@ public:
 	int curve;
 	int track;
 	bool isrun;
+    float t_time;
+    const int DIVIDE_LINE = 40;
 };  
 
 #endif // TRAINVIEW_H  

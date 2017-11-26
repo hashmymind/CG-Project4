@@ -4,7 +4,6 @@ TrainView::TrainView(QWidget *parent) :
 QGLWidget(parent)  
 {  
 	resetArcball();
-	
 }  
 TrainView::~TrainView()  
 {}  
@@ -164,9 +163,7 @@ setProjection()
 	// put code for train view projection here!	
 	//####################################################################
 	else {
-#ifdef EXAMPLE_SOLUTION
-		trainCamView(this,aspect);
-#endif
+		trainCamView(aspect);
 		update();
 	}
 }
@@ -205,7 +202,7 @@ void TrainView::drawStuff(bool doingShadows)
 
 	// draw the train
     if (this->camera != 2) { // don't draw the train if you're looking out the front window
-		drawTrain(doingShadows);
+		drawTrain();
     }
 }
 void TrainView::drawTrack(bool doingShadows) {
@@ -271,7 +268,8 @@ void TrainView::drawTrack(bool doingShadows) {
     }
 }
 
-void TrainView::drawTrain(float t) {
+void TrainView::drawTrain() {
+    float t = this->t_time;
     spline_t type_spline = (spline_t) this->curve;
     t *= m_pTrack->points.size();
     size_t i;
@@ -410,4 +408,7 @@ inline Pnt3f TrainView::Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
 	result = subResult[0] * T[0] + subResult[1] * T[1] + subResult[2] * T[2] + subResult[3] * T[3];
 
 	return result;
+}
+// [TODO]
+void TrainView::trainCamView(float aspect) {
 }
