@@ -74,7 +74,9 @@ public:
 	int track;
 	bool isrun;
     float t_time;
+	float arclen;
     const int DIVIDE_LINE = 40;
+	const float interval = 5.0;
 };  
 
 #endif // TRAINVIEW_H  

@@ -206,6 +206,7 @@ void TrainView::drawStuff(bool doingShadows)
     }
 }
 void TrainView::drawTrack(bool doingShadows) {
+	this->arclen = 0.0;
     spline_t type_spline = (spline_t) this->curve;
     for (size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
         // pos
