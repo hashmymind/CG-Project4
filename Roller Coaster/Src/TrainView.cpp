@@ -254,6 +254,7 @@ void TrainView::drawTrack(bool doingShadows) {
             cross_t.normalize();
             cross_t = cross_t * 2.5f;
             // Draw.
+			if (j == 0)continue;
             glLineWidth(3);
             glBegin(GL_LINES);
             if (!doingShadows) {
@@ -372,9 +373,41 @@ inline Pnt3f TrainView::Linear(Pnt3f p1, Pnt3f p2, float t) {
 }
 // [TODO]
 inline Pnt3f TrainView::Cardinal(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
-    return Pnt3f();
+	Pnt3f result;
+	Pnt3f G[4] = { p0,p1,p2,p3 };
+	Pnt3f subResult[4];
+	float M[4][4] = {
+		{-1, 2,-1, 0},
+		{ 3,-5, 0, 2},
+		{-3, 4, 1, 0},
+		{ 1,-1, 0, 0}
+	};
+	float T[4] = {t*t*t,t*t,t,1};
+	for (int i = 0; i < 4; ++i) {
+		subResult[i] = G[0] * M[0][i] + G[1] * M[1][i] + G[2] * M[2][i] + G[3] * M[3][i];
+		subResult[i] = subResult[i] * 0.5;
+	}
+	result = subResult[0] * T[0] + subResult[1] * T[1] + subResult[2] * T[2] + subResult[3] * T[3];
+
+    return result;
 }
 // [TODO]
 inline Pnt3f TrainView::Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
-    return Pnt3f();
+	Pnt3f result;
+	Pnt3f G[4] = { p0,p1,p2,p3 };
+	Pnt3f subResult[4];
+	float M[4][4] = {
+		{ -1, 3,-3, 1 },
+		{ 3,-6, 0, 4 },
+		{ -3, 3, 3, 1 },
+		{ 1, 0, 0, 0 }
+	};
+	float T[4] = { t*t*t,t*t,t,1 };
+	for (int i = 0; i < 4; ++i) {
+		subResult[i] = G[0] * M[0][i] + G[1] * M[1][i] + G[2] * M[2][i] + G[3] * M[3][i];
+		subResult[i] = subResult[i] * (1.0/6.0);
+	}
+	result = subResult[0] * T[0] + subResult[1] * T[1] + subResult[2] * T[2] + subResult[3] * T[3];
+
+	return result;
 }

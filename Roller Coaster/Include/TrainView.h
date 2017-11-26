@@ -13,7 +13,7 @@
 class AppMain;
 class CTrack;
 
-#define DIVIDE_LINE 20
+#define DIVIDE_LINE 100
 
 enum spline_t {
     spline_Linear,
