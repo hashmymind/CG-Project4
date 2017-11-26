@@ -201,25 +201,123 @@ void TrainView::drawStuff(bool doingShadows)
 		update();
 	}
 	// draw the track
-	//####################################################################
-	// TODO: 
-	// call your own track drawing code
-	//####################################################################
-	
-#ifdef EXAMPLE_SOLUTION
-	drawTrack(this, doingShadows);
-#endif
+	drawTrack(doingShadows);
 
 	// draw the train
-	//####################################################################
-	// TODO: 
-	//	call your own train drawing code
-	//####################################################################
-#ifdef EXAMPLE_SOLUTION
-	// don't draw the train if you're looking out the front window
-	if (!tw->trainCam->value())
-		drawTrain(this, doingShadows);
-#endif
+    if (this->camera != 2) { // don't draw the train if you're looking out the front window
+		drawTrain(doingShadows);
+    }
+}
+void TrainView::drawTrack(bool doingShadows) {
+    spline_t type_spline = (spline_t) this->curve;
+    for (size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
+        // pos
+        Pnt3f cp_pos[4] = {
+            this->m_pTrack->points[((i - 1) + this->m_pTrack->points.size()) % this->m_pTrack->points.size()].pos, // for G
+            this->m_pTrack->points[i].pos,
+            this->m_pTrack->points[(i + 1) % this->m_pTrack->points.size()].pos,
+            this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].pos // for G
+        };
+        // orient
+        Pnt3f cp_orient[4] = {
+            this->m_pTrack->points[((i - 1) + this->m_pTrack->points.size()) % this->m_pTrack->points.size()].orient, // for G
+            this->m_pTrack->points[i].orient,
+            this->m_pTrack->points[(i + 1) % this->m_pTrack->points.size()].orient,
+            this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].orient // for G
+        };
+
+        float percent = 1.0f / DIVIDE_LINE;
+        float t = 0;
+
+        Pnt3f qt = cp_pos[1];
+        for (size_t j = 0; j < DIVIDE_LINE; j++) {
+            Pnt3f orient_t;
+            Pnt3f qt0 = qt;
+            switch (type_spline) {
+                case spline_Linear:
+                    orient_t = Linear(cp_orient[1], cp_orient[2], t);
+                    qt = Linear(cp_pos[1], cp_pos[2], t += percent);
+                    break;
+                case spline_Cardinal:
+                    orient_t = Cardinal(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
+                    qt = Cardinal(cp_pos[0], cp_pos[1], cp_pos[2], cp_pos[3], t += percent);
+                    break;
+                case spline_Cubic:
+                    orient_t = Cubic(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
+                    qt = Cubic(cp_pos[0], cp_pos[1], cp_pos[2], cp_pos[3], t += percent);
+                    break;
+            }
+            Pnt3f qt1 = qt;
+            // cross
+            orient_t.normalize();
+            Pnt3f cross_t = (qt1 - qt0) * orient_t;
+            cross_t.normalize();
+            cross_t = cross_t * 2.5f;
+            // Draw.
+            glLineWidth(3);
+            glBegin(GL_LINES);
+            if (!doingShadows) {
+                glColor3ub(32, 32, 64);
+            }
+            glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
+            glVertex3f(qt1.x + cross_t.x, qt1.y + cross_t.y, qt1.z + cross_t.z);
+
+            glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
+            glVertex3f(qt1.x - cross_t.x, qt1.y - cross_t.y, qt1.z - cross_t.z);
+            glEnd();
+            glLineWidth(1);
+        }
+    }
+}
+
+void TrainView::drawTrain(float t) {
+    spline_t type_spline = (spline_t) this->curve;
+    t *= m_pTrack->points.size();
+    size_t i;
+    for (i = 0; t > 1; t -= 1) { i++; }
+    // pos
+    Pnt3f cp_pos[4] = {
+        this->m_pTrack->points[((i - 1) + this->m_pTrack->points.size()) % this->m_pTrack->points.size()].pos, // for G
+        this->m_pTrack->points[i].pos,
+        this->m_pTrack->points[(i + 1) % this->m_pTrack->points.size()].pos,
+        this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].pos // for G
+    };
+    // orient
+    Pnt3f cp_orient[4] = {
+        this->m_pTrack->points[((i - 1) + this->m_pTrack->points.size()) % this->m_pTrack->points.size()].orient, // for G
+        this->m_pTrack->points[i].orient,
+        this->m_pTrack->points[(i + 1) % this->m_pTrack->points.size()].orient,
+        this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].orient // for G
+    };
+
+    Pnt3f qt, orient_t;
+    switch (type_spline) {
+        case spline_Linear:
+            qt = Linear(cp_pos[1], cp_pos[2], t);
+            orient_t = Linear(cp_orient[1], cp_orient[2], t);
+            break;
+        case spline_Cardinal:
+            qt = Cardinal(cp_pos[0], cp_pos[1], cp_pos[2], cp_pos[3], t);
+            orient_t = Cardinal(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
+            break;
+        case spline_Cubic:
+            qt = Cubic(cp_pos[0], cp_pos[1], cp_pos[2], cp_pos[3], t);
+            orient_t = Cubic(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
+            break;
+    }
+    // Draw.
+    glColor3ub(255, 255, 255);
+    glBegin(GL_QUADS);
+    // [TODO] draw train.
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+    glEnd();
 }
 
 void TrainView::
@@ -269,6 +367,14 @@ void TrainView::
 		selectedCube = -1;
 }
 
-void drawTrack(TrainView* trainView, bool doingShadows) {
-
+inline Pnt3f TrainView::Linear(Pnt3f p1, Pnt3f p2, float t) {
+    return (1 - t) * p1 + t * p2;
+}
+// [TODO]
+inline Pnt3f TrainView::Cardinal(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
+    return Pnt3f();
+}
+// [TODO]
+inline Pnt3f TrainView::Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
+    return Pnt3f();
 }

@@ -10,9 +10,16 @@
 #include "Utilities/ArcBallCam.H"
 #include "Utilities/3DUtils.H"
 #include "Track.H"
-
 class AppMain;
 class CTrack;
+
+#define DIVIDE_LINE 20
+
+enum spline_t {
+    spline_Linear,
+    spline_Cardinal,
+    spline_Cubic
+};
 
 //#######################################################################
 // TODO
@@ -37,7 +44,6 @@ public:
 	// it has to be encapsulated, since we draw differently if
 	// we're drawing shadows (no colors, for example)
 	void drawStuff(bool doingShadows=false);
-
 	// setup the projection - assuming that the projection stack has been
 	// cleared for you
 	void setProjection();
@@ -50,6 +56,13 @@ public:
 
 	void initializeGL();
 
+private:
+    inline Pnt3f Linear(Pnt3f p1, Pnt3f p2, float t);
+    inline Pnt3f Cardinal(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t);
+    inline Pnt3f Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t);
+    void drawTrack(bool);
+    void drawTrain(float);
+
 public:
 	ArcBallCam		arcball;			// keep an ArcBall for the UI
 	int				selectedCube;  // simple - just remember which cube is selected
@@ -61,7 +74,5 @@ public:
 	int track;
 	bool isrun;
 };  
-
-void drawTrack(TrainView*,bool);
 
 #endif // TRAINVIEW_H  
