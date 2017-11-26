@@ -71,11 +71,11 @@
     <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VC_ReferencesPath_x64);</ReferencePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Qt\Qt5.8.0\5.8\msvc2015_64\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(VC_ReferencesPath_x86);</ReferencePath>
+    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Qt\Qt5.8.0\5.8\msvc2015_64\lib;$(VC_ReferencesPath_x86)</ReferencePath>
     <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VC_ReferencesPath_x64);</ReferencePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Qt\Qt5.8.0\5.8\msvc2015_64\lib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

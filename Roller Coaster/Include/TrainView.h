@@ -1,5 +1,5 @@
 #ifndef TRAINVIEW_H  
-#define TRAINVIEW_H  
+#define TRAINVIEW_H
 #include <QtOpenGL/QGLWidget> 
 #include <QtGui/QtGui>  
 #include <QtOpenGL/QtOpenGL>  
@@ -61,4 +61,7 @@ public:
 	int track;
 	bool isrun;
 };  
+
+void drawTrack(TrainView*,bool);
+
 #endif // TRAINVIEW_H  

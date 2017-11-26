@@ -205,7 +205,7 @@ void TrainView::drawStuff(bool doingShadows)
 	// TODO: 
 	// call your own track drawing code
 	//####################################################################
-
+	
 #ifdef EXAMPLE_SOLUTION
 	drawTrack(this, doingShadows);
 #endif
@@ -267,4 +267,8 @@ void TrainView::
 		selectedCube = buf[3]-1;
 	} else // nothing hit, nothing selected
 		selectedCube = -1;
+}
+
+void drawTrack(TrainView* trainView, bool doingShadows) {
+
 }
