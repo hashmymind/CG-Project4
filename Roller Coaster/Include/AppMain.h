@@ -46,6 +46,8 @@ public:
 
 	bool canpan;
 	bool isHover;
+    // Train run.
+    QTimer *timer;
 
 private:
 	void UpdateCameraState( int index );
@@ -86,6 +88,8 @@ private:
 		void RotateControlPointSubX();
 		void RotateControlPointAddZ();
 		void RotateControlPointSubZ();
+
+        void TrainRun();
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *e); 
