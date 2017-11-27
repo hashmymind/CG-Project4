@@ -32,6 +32,9 @@ AppMain::AppMain(QWidget *parent)
     this->mOffsetY = 0;
     this->mouseX = 0;
     this->mouseY = 0;
+    // [TODO] Model????
+    //this->trainview->m = new Model(QString("mod/train.obj"), 20, Point3d(5,5,5));
+    //this->trainview->m->render(true, true);
 
     // Timer.
     timer = new QTimer(this);
