@@ -204,20 +204,36 @@ void TrainView::drawStuff(bool doingShadows)
     // draw train.
 	drawTrain(this->camera != 2);// don't draw the train if you're looking out the front window
 }
+void TrainView::calcPosition(Pnt3f& qt, Pnt3f& orient, Pnt3f cpPos[4], Pnt3f cpOrient[4], float t, spline_t& type_spline) {
+    switch (type_spline) {
+    case spline_Linear:
+        orient = this->Linear(cpOrient[1], cpOrient[2], t);
+        qt = this->Linear(cpPos[1], cpPos[2], t);
+        break;
+    case spline_Cardinal:
+        orient = this->Cardinal(cpOrient[0], cpOrient[1], cpOrient[2], cpOrient[3], t);
+        qt = this->Cardinal(cpPos[0], cpPos[1], cpPos[2], cpPos[3], t);
+        break;
+    case spline_Cubic:
+        orient = this->Cubic(cpOrient[0], cpOrient[1], cpOrient[2], cpOrient[3], t);
+        qt = this->Cubic(cpPos[0], cpPos[1], cpPos[2], cpPos[3], t);
+        break;
+    }
+}
 void TrainView::drawTrack(bool doingShadows) {
 	this->arclen.clear();
 	this->arclen.resize(this->m_pTrack->points.size());
     spline_t type_spline = (spline_t) this->curve;
     for (size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
         // pos
-        Pnt3f cp_pos[4] = {
+        Pnt3f cpPos[4] = {
             this->m_pTrack->points[((i - 1) + this->m_pTrack->points.size()) % this->m_pTrack->points.size()].pos, // for G
             this->m_pTrack->points[i].pos,
             this->m_pTrack->points[(i + 1) % this->m_pTrack->points.size()].pos,
             this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].pos // for G
         };
         // orient
-        Pnt3f cp_orient[4] = {
+        Pnt3f cpOrient[4] = {
             this->m_pTrack->points[((i - 1) + this->m_pTrack->points.size()) % this->m_pTrack->points.size()].orient, // for G
             this->m_pTrack->points[i].orient,
             this->m_pTrack->points[(i + 1) % this->m_pTrack->points.size()].orient,
@@ -229,34 +245,21 @@ void TrainView::drawTrack(bool doingShadows) {
 
 		float partialLen = 0,intervalCount = 0;
 
-        Pnt3f qt = cp_pos[1];
+        Pnt3f qt, orient;
         for (size_t j = 0; j < DIVIDE_LINE; j++) {
-            Pnt3f orient_t;
+            t += percent;
             Pnt3f qt0 = qt;
-            switch (type_spline) {
-                case spline_Linear:
-                    orient_t = Linear(cp_orient[1], cp_orient[2], t);
-                    qt = Linear(cp_pos[1], cp_pos[2], t += percent);
-                    break;
-                case spline_Cardinal:
-                    orient_t = Cardinal(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
-                    qt = Cardinal(cp_pos[0], cp_pos[1], cp_pos[2], cp_pos[3], t += percent);
-                    break;
-                case spline_Cubic:
-                    orient_t = Cubic(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
-                    qt = Cubic(cp_pos[0], cp_pos[1], cp_pos[2], cp_pos[3], t += percent);
-                    break;
-            }
+            calcPosition(qt, orient, cpPos, cpOrient, t, type_spline);
             Pnt3f qt1 = qt;
 			// calculate partial length
 			float dist = sqrt(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2));
 			partialLen += dist;
 			intervalCount += dist;
             // cross
-            orient_t.normalize();
-            Pnt3f cross_t = (qt1 - qt0) * orient_t;
-            cross_t.normalize();
-            cross_t = cross_t * 2.5f;
+            orient.normalize();
+            Pnt3f cross = (qt1 - qt0) * orient;
+            cross.normalize();
+            cross = cross * 2.5f;
             // Draw.
 			if (j == 0)continue;
             glLineWidth(3);
@@ -264,18 +267,18 @@ void TrainView::drawTrack(bool doingShadows) {
             if (!doingShadows) {
                 glColor3ub(32, 32, 64);
             }
-            glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
-            glVertex3f(qt1.x + cross_t.x, qt1.y + cross_t.y, qt1.z + cross_t.z);
+            glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
+            glVertex3f(qt1.x + cross.x, qt1.y + cross.y, qt1.z + cross.z);
 
-            glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
-            glVertex3f(qt1.x - cross_t.x, qt1.y - cross_t.y, qt1.z - cross_t.z);
+            glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
+            glVertex3f(qt1.x - cross.x, qt1.y - cross.y, qt1.z - cross.z);
             glEnd();
-			if (this->track == 1 && intervalCount >INTERVAL) {
+			if (this->track == 1 && intervalCount > INTERVAL) {
 				// track
 				glBegin(GL_LINES);
 				intervalCount = 0;
-				glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
-				glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
+				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
+				glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
 				glEnd();
 
 			}
@@ -283,8 +286,8 @@ void TrainView::drawTrack(bool doingShadows) {
 				// plane
 				glLineWidth(5);
 				glBegin(GL_LINES);
-				glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
-				glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
+				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
+				glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
 				glEnd();
 			}
             glLineWidth(1);
@@ -292,59 +295,67 @@ void TrainView::drawTrack(bool doingShadows) {
 		this->arclen[i] = partialLen;
     }
 }
-
-void TrainView::drawTrain(bool drawingTrain) {
-    float t = this->t_time;
+// 傳入0~1的數 回傳train的座標資訊
+void TrainView::calcTrain(Pnt3f& qt, Pnt3f& orient, float t) {
     spline_t type_spline = (spline_t) this->curve;
     t *= m_pTrack->points.size();
     size_t i;
     for (i = 0; t > 1; t -= 1) { i++; }
     // pos
-    Pnt3f cp_pos[4] = {
+    Pnt3f cpPos[4] = {
         this->m_pTrack->points[((i - 1) + this->m_pTrack->points.size()) % this->m_pTrack->points.size()].pos, // for G
         this->m_pTrack->points[i].pos,
         this->m_pTrack->points[(i + 1) % this->m_pTrack->points.size()].pos,
         this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].pos // for G
     };
     // orient
-    Pnt3f cp_orient[4] = {
+    Pnt3f cpOrient[4] = {
         this->m_pTrack->points[((i - 1) + this->m_pTrack->points.size()) % this->m_pTrack->points.size()].orient, // for G
         this->m_pTrack->points[i].orient,
         this->m_pTrack->points[(i + 1) % this->m_pTrack->points.size()].orient,
         this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].orient // for G
     };
 
-    Pnt3f qt, orient_t;
-    switch (type_spline) {
-        case spline_Linear:
-            qt = Linear(cp_pos[1], cp_pos[2], t);
-            orient_t = Linear(cp_orient[1], cp_orient[2], t);
-            break;
-        case spline_Cardinal:
-            qt = Cardinal(cp_pos[0], cp_pos[1], cp_pos[2], cp_pos[3], t);
-            orient_t = Cardinal(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
-            break;
-        case spline_Cubic:
-            qt = Cubic(cp_pos[0], cp_pos[1], cp_pos[2], cp_pos[3], t);
-            orient_t = Cubic(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
-            break;
+    calcPosition(qt, orient, cpPos, cpOrient, t, type_spline);
+}
+// Return the next position.
+float TrainView::advanceTrain() {
+    float t = this->tPos;
+    float tt = t * m_pTrack->points.size();
+    size_t i;
+    for (i = 0; tt > 1; tt -= 1) { i++; }
+    t += (this->velocity / this->m_pTrack->points.size() / (this->arclen[i]));
+
+    if (t > 1.0f) {
+        t -= 1.0f;
+    } else if (t < 0.0f) {
+        t += 1.0f;
     }
-    // Update train coordonate.
+    return t;
+}
+void TrainView::drawTrain(bool drawingTrain) {
+    Pnt3f qt, orient;
+    calcTrain(qt, orient, this->tPos);
+    // Update cureent train coordinate.
     this->trainPos = qt;
-    this->trainOrient = orient_t;
+    this->trainOrient = orient;
+    // Update train direction.
+    float nextT = advanceTrain();
+    calcTrain(qt, orient, nextT);
+    this->trainDir = qt - this->trainPos;
     // Draw.
     if (drawingTrain) {
         glColor3ub(255, 255, 255);
         glBegin(GL_QUADS);
         // [TODO] draw train.
         glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+        glVertex3f(this->trainPos.x - 5, this->trainPos.y - 5, this->trainPos.z - 5);
         glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+        glVertex3f(this->trainPos.x + 5, this->trainPos.y - 5, this->trainPos.z - 5);
         glTexCoord2f(1.0f, 1.0f);
-        glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+        glVertex3f(this->trainPos.x + 5, this->trainPos.y + 5, this->trainPos.z - 5);
         glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+        glVertex3f(this->trainPos.x - 5, this->trainPos.y + 5, this->trainPos.z - 5);
         glEnd();
     }
 }
@@ -443,12 +454,31 @@ void TrainView::trainCamView(float aspect) {
     gluPerspective(60, aspect, 1, 2000);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    // Calc Spherical coordinate.
-    float theta = (90 + this->verticalDir) * M_PI / 180.0f; // 0~180
-    float phi = (180 + this->horizontalDir) * M_PI / 180.0f; // 0~360
+
+    this->trainDir.normalize();
+    // cross 得到相對X軸
+    this->trainOrient.normalize();
+    Pnt3f cross = this->trainDir * this->trainOrient;
+    cross.normalize();
+    // Rotation.
+    QMatrix4x4 rotateMatrix;
+    rotateMatrix.rotate(this->horizontalDir, this->trainOrient.x, this->trainOrient.y, this->trainOrient.z);
+    rotateMatrix.rotate(this->verticalDir, cross.x, cross.y, cross.z);
+
+    Pnt3f direction = this->trainDir;
+    QVector3D v(direction.x, direction.y, direction.z);
+    v = rotateMatrix * v;
+    direction.x = v.x();
+    direction.y = v.y();
+    direction.z = v.z();
+    // 固定位移
     Pnt3f offset;
-    offset.x = -sin(theta) * cos(phi);
-    offset.y = -cos(theta);
-    offset.z =  sin(theta) * sin(phi);
-    gluLookAt(this->trainPos.x, this->trainPos.y + 2.0f, this->trainPos.z, this->trainPos.x + offset.x, this->trainPos.y + 2.0f + offset.y, this->trainPos.z + offset.z, this->trainOrient.x, this->trainOrient.y, this->trainOrient.z);
+    const float OFFSET_X = 0.0f;
+    const float OFFSET_Y = 2.0f;
+    const float OFFSET_Z = 0.0f;
+    offset = cross * OFFSET_X + this->trainOrient * OFFSET_Y + this->trainDir * OFFSET_Z;
+
+    Pnt3f pos = this->trainPos + offset;
+    Pnt3f center = this->trainPos + offset + direction;
+    gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, this->trainOrient.x, this->trainOrient.y, this->trainOrient.z);
 }

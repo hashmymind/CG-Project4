@@ -59,10 +59,14 @@ public:
 
 	void initializeGL();
 
+    float advanceTrain();
+
 private:
     inline Pnt3f Linear(Pnt3f p1, Pnt3f p2, float t);
     inline Pnt3f Cardinal(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t);
     inline Pnt3f Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t);
+    void calcPosition(Pnt3f& qt, Pnt3f& orient, Pnt3f cpPos[4], Pnt3f cpOrient[4], float t, spline_t& type_spline);
+    void calcTrain(Pnt3f& qt, Pnt3f& orient, float t);
     void drawTrack(bool);
     void drawTrain(bool drawingTrain);
     void trainCamView(float);
@@ -77,10 +81,12 @@ public:
 	int curve;
 	int track;
 	bool isrun;
-    float t_time;
+    // Velocity
+    float velocity;
+    float tPos; // 0 ~ 1 代表在整個軌道迴圈的位置
 	vector<float> arclen; // use after drawTrack was called
-    Pnt3f trainPos;
-    Pnt3f trainOrient;
+    Pnt3f trainPos, trainOrient;
+    Pnt3f trainDir;
     float verticalDir, horizontalDir;
 
     const int DIVIDE_LINE = 1000;

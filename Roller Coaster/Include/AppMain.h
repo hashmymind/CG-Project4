@@ -31,12 +31,6 @@ public:
     // call this method when things change
     void CheckSelected();
 
-	// this moves the train forward on the track - its up to you to do this
-	// correctly. it gets called from the idle callback loop
-	// it should handle forward and backwards
-	void advanceTrain(float dir = 1);
-
-
 public:
 	// keep track of the stuff in the world
 	CTrack				m_Track;
@@ -50,7 +44,7 @@ public:
     QTimer *timer;
 private:
     // Mouse offset.
-    double mouseX, mouseY, mOffsetX, mOffsetY;
+    float mouseX, mouseY, mOffsetX, mOffsetY;
     // Cursor.
     bool lockCursor;
 

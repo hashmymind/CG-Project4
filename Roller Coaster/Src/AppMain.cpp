@@ -24,7 +24,7 @@ AppMain::AppMain(QWidget *parent)
 	this->trainview->track = 0;
 	this->trainview->curve = 0;
 	this->trainview->isrun = false;
-    this->trainview->t_time = 0;
+    this->trainview->tPos = 0;
     this->trainview->verticalDir = 0;
     this->trainview->horizontalDir = 0;
     this->lockCursor = false;
@@ -505,32 +505,11 @@ void AppMain::UpdateTrackState( int index )
 }
 void AppMain::TrainRun() {
     if (this->trainview->isrun) {
-		this->advanceTrain(ui.sSpeed->value()/25.0);
-        this->CheckSelected();
+        this->trainview->velocity = ui.sSpeed->value() / 25.0f;
+        this->trainview->tPos = this->trainview->advanceTrain(); // Advance train.
     }
 }
 
-//************************************************************************
-//
-// * This will get called (approximately) 30 times per second
-//   if the run button is pressed
-//========================================================================
-void AppMain::
-advanceTrain(float dir)
-//========================================================================
-{
-	float t = this->trainview->t_time;
-	t *= m_Track.points.size();
-	size_t i;
-	for (i = 0; t > 1; t -= 1) { i++; }
-    this->trainview->t_time += ( dir / this->m_Track.points.size() / (this->trainview->arclen[i]) );
-
-    //std::cout << this->trainview->t_time << "\n";
-    if (trainview->t_time > 1.0f) {
-        trainview->t_time -= 1.0f;
-    }
-}
-#include<iostream>
 void AppMain::UpdateMouse() {
     static bool last;
     auto p = this->mapFromGlobal(this->cursor().pos());
