@@ -1,6 +1,6 @@
 #include "TrainView.h"  
 
-#define M_PI 3.14159265f
+
 
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
@@ -333,8 +333,12 @@ void TrainView::drawTrain(bool drawingTrain) {
     this->trainPos = qt;
     this->trainOrient = orient_t;
     // Draw.
+	
+
     if (drawingTrain) {
-        glColor3ub(255, 255, 255);
+		this->m = new Model(QString("mod/train.obj"), 20, Point3d(qt.x,qt.y,qt.z));
+		this->m->render(true, true);
+        /*glColor3ub(255, 255, 255);
         glBegin(GL_QUADS);
         // [TODO] draw train.
         glTexCoord2f(0.0f, 0.0f);
@@ -345,7 +349,7 @@ void TrainView::drawTrain(bool drawingTrain) {
         glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
-        glEnd();
+        glEnd();*/
     }
 }
 

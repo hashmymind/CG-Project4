@@ -12,6 +12,7 @@
 #include "Utilities/ArcBallCam.H"
 #include "Utilities/3DUtils.H"
 #include "Track.H"
+#include "Model.h"
 
 using std::vector;
 
@@ -79,11 +80,13 @@ public:
 	bool isrun;
     float t_time;
 	vector<float> arclen; // use after drawTrack was called
+
+	Model *m;
     Pnt3f trainPos;
     Pnt3f trainOrient;
     float verticalDir, horizontalDir;
 
-    const int DIVIDE_LINE = 1000;
+    const int DIVIDE_LINE = 5000;
 	const float INTERVAL = 5.0;
 	const float TRACK_WIDTH = 2;
 };  
