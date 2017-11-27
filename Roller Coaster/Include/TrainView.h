@@ -5,12 +5,16 @@
 #include <QtGui/QtGui>  
 #include <QtOpenGL/QtOpenGL>  
 #include <GL/GLU.h>
+#include <vector>
 #include <QtGui/QOpenGLFunctions_4_3_Core>
 #pragma comment(lib,"opengl32.lib")
 #pragma comment(lib,"glu32.lib") 
 #include "Utilities/ArcBallCam.H"
 #include "Utilities/3DUtils.H"
 #include "Track.H"
+
+using std::vector;
+
 class AppMain;
 class CTrack;
 
@@ -74,9 +78,11 @@ public:
 	int track;
 	bool isrun;
     float t_time;
-	float arclen;
-    const int DIVIDE_LINE = 40;
-	const float interval = 5.0;
+	vector<float> arclen; // use after drawTrack was called
+	
+    const int DIVIDE_LINE = 1000;
+	const float INTERVAL = 5.0;
+	const float TRACK_WIDTH = 2;
 };  
 
 #endif // TRAINVIEW_H  

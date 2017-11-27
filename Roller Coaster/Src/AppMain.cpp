@@ -479,7 +479,12 @@ void AppMain::
 advanceTrain(float dir)
 //========================================================================
 {
-    this->trainview->t_time += (dir / m_Track.points.size() / (trainview->DIVIDE_LINE));
+	float t = this->trainview->t_time;
+	t *= m_Track.points.size();
+	size_t i;
+	for (i = 0; t > 1; t -= 1) { i++; }
+    this->trainview->t_time += (dir / m_Track.points.size() /(this->trainview->arclen[i]) );
+
     //std::cout << this->trainview->t_time << "\n";
     if (trainview->t_time > 1.0f) {
         trainview->t_time -= 1.0f;

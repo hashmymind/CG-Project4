@@ -206,7 +206,8 @@ void TrainView::drawStuff(bool doingShadows)
     }
 }
 void TrainView::drawTrack(bool doingShadows) {
-	this->arclen = 0.0;
+	this->arclen.clear();
+	this->arclen.resize(this->m_pTrack->points.size());
     spline_t type_spline = (spline_t) this->curve;
     for (size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
         // pos
@@ -227,6 +228,8 @@ void TrainView::drawTrack(bool doingShadows) {
         float percent = 1.0f / DIVIDE_LINE;
         float t = 0;
 
+		float partialLen = 0,intervalCount = 0;
+
         Pnt3f qt = cp_pos[1];
         for (size_t j = 0; j < DIVIDE_LINE; j++) {
             Pnt3f orient_t;
@@ -246,6 +249,10 @@ void TrainView::drawTrack(bool doingShadows) {
                     break;
             }
             Pnt3f qt1 = qt;
+			// calculate partial length
+			float dist = sqrt(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2));
+			partialLen += dist;
+			intervalCount += dist;
             // cross
             orient_t.normalize();
             Pnt3f cross_t = (qt1 - qt0) * orient_t;
@@ -264,8 +271,22 @@ void TrainView::drawTrack(bool doingShadows) {
             glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
             glVertex3f(qt1.x - cross_t.x, qt1.y - cross_t.y, qt1.z - cross_t.z);
             glEnd();
+			if (this->track == 1 && intervalCount >INTERVAL) {
+				// track
+				glBegin(GL_LINES);
+				intervalCount = 0;
+				glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
+				glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
+				glEnd();
+
+			}
+			else if (this->track == 2) {
+				// plane
+
+			}
             glLineWidth(1);
         }
+		this->arclen[i] = partialLen;
     }
 }
 
