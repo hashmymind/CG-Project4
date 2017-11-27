@@ -28,8 +28,8 @@ public:
 	static AppMain *Instance;
 
 public:
-	// call this method when things change
-	void damageMe();
+    // call this method when things change
+    void damageMe();
 
 	// this moves the train forward on the track - its up to you to do this
 	// correctly. it gets called from the idle callback loop
@@ -48,12 +48,18 @@ public:
 	bool isHover;
     // Train run.
     QTimer *timer;
+private:
+    // Mouse offset.
+    double mouseX, mouseY, mOffsetX, mOffsetY;
+    // Cursor.
+    bool lockCursor;
 
 private:
 	void UpdateCameraState( int index );
 	void UpdateCurveState( int index );
 	void UpdateTrackState( int index );
 	void UpdateVelocityState( int index );
+    void UpdateMouse();
 	void rollx( float dir );
 	void rollz( float dir );
 	Ui::AppMainClass ui;

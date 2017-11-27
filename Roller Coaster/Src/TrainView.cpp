@@ -1,5 +1,7 @@
 #include "TrainView.h"  
 
+#define M_PI 3.14159265f
+
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
 {  
@@ -201,9 +203,9 @@ void TrainView::drawStuff(bool doingShadows)
 	drawTrack(doingShadows);
 
 	// draw the train
-    if (this->camera != 2) { // don't draw the train if you're looking out the front window
+    //if (this->camera != 2) { // don't draw the train if you're looking out the front window
 		drawTrain();
-    }
+    //}
 }
 void TrainView::drawTrack(bool doingShadows) {
 	this->arclen.clear();
@@ -326,6 +328,8 @@ void TrainView::drawTrain() {
             orient_t = Cubic(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
             break;
     }
+    this->trainPos = qt;
+    this->trainOrient = orient_t;
     // Draw.
     glColor3ub(255, 255, 255);
     glBegin(GL_QUADS);
@@ -433,4 +437,18 @@ inline Pnt3f TrainView::Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
 }
 // [TODO]
 void TrainView::trainCamView(float aspect) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60, aspect, 1, 2000);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    float theta = this->verticalDir * M_PI / 180.0f; // 0~180
+    float phi = this->horizontalDir * M_PI / 180.0f; // 0~360
+    Pnt3f offset;
+    offset.x = -sin(theta) * cos(phi);
+    offset.y = cos(theta);
+    offset.z = sin(theta) * sin(phi);
+    gluLookAt(this->trainPos.x, this->trainPos.y, this->trainPos.z, this->trainPos.x + offset.x, this->trainPos.y + offset.y, this->trainPos.z + offset.z, this->trainOrient.x, this->trainOrient.y, this->trainOrient.z);
+
 }

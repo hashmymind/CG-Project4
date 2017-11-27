@@ -17,13 +17,21 @@ AppMain::AppMain(QWidget *parent)
 	setGeometry(100,25,1000,768);   
 	ui.mainLayout->layout()->addWidget(trainview);
 	trainview->installEventFilter(this);
-	this->canpan = false;
+    this->trainview->setFocusPolicy(Qt::ClickFocus);
+    this->canpan = false;
 	this->isHover = false;
 	this->trainview->camera = 0;
 	this->trainview->track = 0;
 	this->trainview->curve = 0;
 	this->trainview->isrun = false;
     this->trainview->t_time = 0;
+    this->trainview->verticalDir = 0;
+    this->trainview->horizontalDir = 0;
+    this->lockCursor = true;
+    this->mOffsetX = 0;
+    this->mOffsetY = 0;
+    this->mouseX = 0;
+    this->mouseY = 0;
 
     // Timer.
     timer = new QTimer(this);
@@ -68,6 +76,15 @@ AppMain::~AppMain()
 }
 
 bool AppMain::eventFilter(QObject *watched, QEvent *e) {
+    if (this->trainview->camera == 2) {
+        this->UpdateMouse();
+        this->trainview->horizontalDir += mOffsetX / -8.0f;
+        this->trainview->verticalDir +=  mOffsetY / -8.0f;
+        if (this->trainview->verticalDir > 180) { this->trainview->verticalDir = 180; }
+        else if (this->trainview->verticalDir < 0) { this->trainview->verticalDir = 0; }
+        mOffsetX = 0;
+        mOffsetY = 0;
+    }
 	if (e->type() == QEvent::MouseButtonPress) {
 		QMouseEvent *event = static_cast<QMouseEvent*> (e);
 		// Get the mouse position
@@ -143,6 +160,9 @@ bool AppMain::eventFilter(QObject *watched, QEvent *e) {
 		// Set up the mode
 		if (event->key() == Qt::Key_Alt) 
 			this->canpan = true;
+        if (event->key() == Qt::Key_Escape) {
+            this->lockCursor = !this->lockCursor;
+        }
 	}
 
 	return QWidget::eventFilter(watched, e);
@@ -162,6 +182,11 @@ AppMain * AppMain::getInstance()
 	}
 	else 
 		return Instance;
+}
+
+void AppMain::damageMe() {
+    if (trainview->selectedCube >= ((int) m_Track.points.size()))
+        trainview->selectedCube = 0;
 }
 
 void AppMain::ToggleMenuBar()
@@ -457,18 +482,6 @@ void AppMain::TrainRun() {
     }
 }
 
-//************************************************************************
-//
-// *
-//========================================================================
-void AppMain::
-damageMe()
-//========================================================================
-{
-	if (trainview->selectedCube >= ((int)m_Track.points.size()))
-		trainview->selectedCube = 0;
-	//trainview->damage(1);
-}
 
 //************************************************************************
 //
@@ -483,10 +496,29 @@ advanceTrain(float dir)
 	t *= m_Track.points.size();
 	size_t i;
 	for (i = 0; t > 1; t -= 1) { i++; }
-    this->trainview->t_time += (dir / m_Track.points.size() /(this->trainview->arclen[i]) );
+    this->trainview->t_time += ( dir / this->m_Track.points.size() / (this->trainview->arclen[i]) );
 
     //std::cout << this->trainview->t_time << "\n";
     if (trainview->t_time > 1.0f) {
         trainview->t_time -= 1.0f;
     }
 }
+#include<iostream>
+void AppMain::UpdateMouse() {
+    static bool last;
+    auto p = this->mapFromGlobal(this->cursor().pos());
+    mOffsetX = p.x() - mouseX;
+    mOffsetY = p.y() - mouseY;
+    if (this->isActiveWindow() && lockCursor) {
+        if (!last) { ShowCursor(false); }
+        last = true;
+        SetCursorPos(this->pos().x() + this->size().width() / 2, this->pos().y() + this->size().height() / 2);
+    } else {
+        if (last) { ShowCursor(true); }
+        last = false;
+    }
+    p = this->mapFromGlobal(this->cursor().pos());
+    mouseX = p.x();
+    mouseY = p.y();
+}
+
