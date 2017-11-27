@@ -505,7 +505,7 @@ void AppMain::UpdateTrackState( int index )
 }
 void AppMain::TrainRun() {
     if (this->trainview->isrun) {
-        this->advanceTrain();
+		this->advanceTrain(ui.sSpeed->value()/25.0);
         this->CheckSelected();
     }
 }
