@@ -17,7 +17,7 @@ AppMain::AppMain(QWidget *parent)
 	setGeometry(100,25,1000,768);   
 	ui.mainLayout->layout()->addWidget(trainview);
 	trainview->installEventFilter(this);
-    this->trainview->setFocusPolicy(Qt::ClickFocus);
+    this->trainview->setFocusPolicy(Qt::StrongFocus);
     this->canpan = false;
 	this->isHover = false;
 	this->trainview->camera = 0;
@@ -27,7 +27,7 @@ AppMain::AppMain(QWidget *parent)
     this->trainview->t_time = 0;
     this->trainview->verticalDir = 0;
     this->trainview->horizontalDir = 0;
-    this->lockCursor = true;
+    this->lockCursor = false;
     this->mOffsetX = 0;
     this->mOffsetY = 0;
     this->mouseX = 0;
@@ -76,14 +76,13 @@ AppMain::~AppMain()
 }
 
 bool AppMain::eventFilter(QObject *watched, QEvent *e) {
+    // Train View Camera Control.
     if (this->trainview->camera == 2) {
         this->UpdateMouse();
         this->trainview->horizontalDir += mOffsetX / -8.0f;
         this->trainview->verticalDir +=  mOffsetY / -8.0f;
-        if (this->trainview->verticalDir > 180) { this->trainview->verticalDir = 180; }
-        else if (this->trainview->verticalDir < 0) { this->trainview->verticalDir = 0; }
-        mOffsetX = 0;
-        mOffsetY = 0;
+        if (this->trainview->verticalDir > 80) { this->trainview->verticalDir = 80; }
+        else if (this->trainview->verticalDir < -80) { this->trainview->verticalDir = -80; }
     }
 	if (e->type() == QEvent::MouseButtonPress) {
 		QMouseEvent *event = static_cast<QMouseEvent*> (e);
@@ -154,15 +153,32 @@ bool AppMain::eventFilter(QObject *watched, QEvent *e) {
 			trainview->arcball.computeNow(x,y);
 		};
 	}
-
+    // Hotkeys.
 	if(e->type() == QEvent::KeyPress){
 		 QKeyEvent *event = static_cast< QKeyEvent*> (e);
-		// Set up the mode
-		if (event->key() == Qt::Key_Alt) 
-			this->canpan = true;
-        if (event->key() == Qt::Key_Escape) {
-            this->lockCursor = !this->lockCursor;
-        }
+         switch (event->key()) {
+             // Set up the mode
+             case Qt::Key_Alt:
+                 this->canpan = true;
+                 break;
+             // Lock cursor.
+             case Qt::Key_Escape:
+                 this->lockCursor = !this->lockCursor;
+                 break;
+             case Qt::Key_Q:
+                 this->NextCameraType();
+                 break;
+             case Qt::Key_E:
+                 this->NextTrackType();
+                 break;
+             case Qt::Key_W:
+                 this->NextCurveType();
+                 break;
+             case Qt::Key_R:
+                 this->SwitchPlayAndPause();
+                 break;
+         }
+		
 	}
 
 	return QWidget::eventFilter(watched, e);
@@ -184,7 +200,7 @@ AppMain * AppMain::getInstance()
 		return Instance;
 }
 
-void AppMain::damageMe() {
+void AppMain::CheckSelected() {
     if (trainview->selectedCube >= ((int) m_Track.points.size()))
         trainview->selectedCube = 0;
 }
@@ -274,6 +290,7 @@ void AppMain::ChangeCameraType( QString type )
 		this->trainview->camera = 2;
 		update();
 	}
+    UpdateCameraState(this->trainview->camera);
 }
 
 void AppMain::ChangeCurveType( QString type )
@@ -290,8 +307,7 @@ void AppMain::ChangeCurveType( QString type )
 	{
 		this->trainview->curve = 2;
 	}
-
-
+    UpdateCurveState(this->trainview->curve);
 }
 
 void AppMain::ChangeTrackType( QString type )
@@ -308,6 +324,7 @@ void AppMain::ChangeTrackType( QString type )
 	{
 		this->trainview->track = 2;
 	}
+    UpdateTrackState(this->trainview->track);
 }
 
 static unsigned long lastRedraw = 0;
@@ -342,7 +359,7 @@ void AppMain::AddControlPoint()
 		this->m_Track.trainU += 1;
 		if (this->m_Track.trainU >= npts) this->m_Track.trainU -= npts;
 	}
-	this->damageMe();
+	this->CheckSelected();
 }
 
 void AppMain::DeleteControlPoint()
@@ -353,7 +370,7 @@ void AppMain::DeleteControlPoint()
 		} else
 			this->m_Track.points.pop_back();
 	}
-	this->damageMe();
+	this->CheckSelected();
 }
 
 
@@ -371,7 +388,7 @@ void AppMain::rollx(float dir)
 		this->m_Track.points[s].orient.y = co * old.y - si * old.z;
 		this->m_Track.points[s].orient.z = si * old.y + co * old.z;
 	}
-	this->damageMe();
+	this->CheckSelected();
 } 
 
 void AppMain::RotateControlPointAddX()
@@ -397,7 +414,7 @@ void AppMain::rollz(float dir)
 		this->m_Track.points[s].orient.y = co * old.y - si * old.x;
 		this->m_Track.points[s].orient.x = si * old.y + co * old.x;
 	}
-	this->damageMe();
+	this->CheckSelected();
 } 
 
 void AppMain::RotateControlPointAddZ()
@@ -412,47 +429,58 @@ void AppMain::RotateControlPointSubZ()
 
 void AppMain::ChangeCamToWorld()
 {
-	this->trainview->camera = 0;
+    this->ui.comboCamera->setCurrentText("World");
 }
 
 void AppMain::ChangeCamToTop()
 {
-	this->trainview->camera = 1;
+    this->ui.comboCamera->setCurrentText("Top");
 }
 
 void AppMain::ChangeCamToTrain()
 {
-	this->trainview->camera = 2;
+    this->ui.comboCamera->setCurrentText("Train");
 }
 
 void AppMain::ChangeCurveToLinear()
 {
-	this->trainview->curve = 0;
+    this->ui.comboCurve->setCurrentText("Linear");
 }
-
 void AppMain::ChangeCurveToCardinal()
 {
-	this->trainview->curve = 1;
+    this->ui.comboCurve->setCurrentText("Cardinal");
 }
 
 void AppMain::ChangeCurveToCubic()
 {
-	this->trainview->curve = 2;
+    this->ui.comboCurve->setCurrentText("Cubic");
 }
 
 void AppMain::ChangeTrackToLine()
 {
-	this->trainview->track = 0;
+    this->ui.comboTrack->setCurrentText("Line");
 }
 
 void AppMain::ChangeTrackToTrack()
 {
-	this->trainview->track = 1;
+    this->ui.comboTrack->setCurrentText("Track");
 }
 
 void AppMain::ChangeTrackToRoad()
 {
-	this->trainview->track = 2;
+    this->ui.comboTrack->setCurrentText("Road");
+}
+
+void AppMain::NextCameraType() {
+    this->ui.comboCamera->setCurrentIndex((this->ui.comboCamera->currentIndex() + 1) % 3);
+}
+
+void AppMain::NextCurveType() {
+    this->ui.comboCurve->setCurrentIndex((this->ui.comboCurve->currentIndex() + 1) % 3);
+}
+
+void AppMain::NextTrackType() {
+    this->ui.comboTrack->setCurrentIndex((this->ui.comboTrack->currentIndex() + 1) % 3);
 }
 
 void AppMain::UpdateCameraState( int index )
@@ -478,10 +506,9 @@ void AppMain::UpdateTrackState( int index )
 void AppMain::TrainRun() {
     if (this->trainview->isrun) {
         this->advanceTrain();
-        this->damageMe();
+        this->CheckSelected();
     }
 }
-
 
 //************************************************************************
 //

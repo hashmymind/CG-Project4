@@ -29,7 +29,7 @@ public:
 
 public:
     // call this method when things change
-    void damageMe();
+    void CheckSelected();
 
 	// this moves the train forward on the track - its up to you to do this
 	// correctly. it gets called from the idle callback loop
@@ -55,6 +55,9 @@ private:
     bool lockCursor;
 
 private:
+    void NextCameraType();
+    void NextCurveType();
+    void NextTrackType();
 	void UpdateCameraState( int index );
 	void UpdateCurveState( int index );
 	void UpdateTrackState( int index );

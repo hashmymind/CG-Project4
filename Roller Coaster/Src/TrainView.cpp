@@ -201,11 +201,8 @@ void TrainView::drawStuff(bool doingShadows)
 	}
 	// draw the track
 	drawTrack(doingShadows);
-
-	// draw the train
-    //if (this->camera != 2) { // don't draw the train if you're looking out the front window
-		drawTrain();
-    //}
+    // draw train.
+	drawTrain(this->camera != 2);// don't draw the train if you're looking out the front window
 }
 void TrainView::drawTrack(bool doingShadows) {
 	this->arclen.clear();
@@ -292,7 +289,7 @@ void TrainView::drawTrack(bool doingShadows) {
     }
 }
 
-void TrainView::drawTrain() {
+void TrainView::drawTrain(bool drawingTrain) {
     float t = this->t_time;
     spline_t type_spline = (spline_t) this->curve;
     t *= m_pTrack->points.size();
@@ -328,21 +325,24 @@ void TrainView::drawTrain() {
             orient_t = Cubic(cp_orient[0], cp_orient[1], cp_orient[2], cp_orient[3], t);
             break;
     }
+    // Update train coordonate.
     this->trainPos = qt;
     this->trainOrient = orient_t;
     // Draw.
-    glColor3ub(255, 255, 255);
-    glBegin(GL_QUADS);
-    // [TODO] draw train.
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
-    glEnd();
+    if (drawingTrain) {
+        glColor3ub(255, 255, 255);
+        glBegin(GL_QUADS);
+        // [TODO] draw train.
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+        glEnd();
+    }
 }
 
 void TrainView::
@@ -391,11 +391,10 @@ void TrainView::
 	} else // nothing hit, nothing selected
 		selectedCube = -1;
 }
-
+// Spline function.
 inline Pnt3f TrainView::Linear(Pnt3f p1, Pnt3f p2, float t) {
     return (1 - t) * p1 + t * p2;
 }
-// [TODO]
 inline Pnt3f TrainView::Cardinal(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
 	Pnt3f result;
 	Pnt3f G[4] = { p0,p1,p2,p3 };
@@ -415,7 +414,6 @@ inline Pnt3f TrainView::Cardinal(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t
 
     return result;
 }
-// [TODO]
 inline Pnt3f TrainView::Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
 	Pnt3f result;
 	Pnt3f G[4] = { p0,p1,p2,p3 };
@@ -435,20 +433,18 @@ inline Pnt3f TrainView::Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
 
 	return result;
 }
-// [TODO]
 void TrainView::trainCamView(float aspect) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(60, aspect, 1, 2000);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-    float theta = this->verticalDir * M_PI / 180.0f; // 0~180
-    float phi = this->horizontalDir * M_PI / 180.0f; // 0~360
+    // Calc Spherical coordinate.
+    float theta = (90 + this->verticalDir) * M_PI / 180.0f; // 0~180
+    float phi = (180 + this->horizontalDir) * M_PI / 180.0f; // 0~360
     Pnt3f offset;
     offset.x = -sin(theta) * cos(phi);
-    offset.y = cos(theta);
-    offset.z = sin(theta) * sin(phi);
-    gluLookAt(this->trainPos.x, this->trainPos.y, this->trainPos.z, this->trainPos.x + offset.x, this->trainPos.y + offset.y, this->trainPos.z + offset.z, this->trainOrient.x, this->trainOrient.y, this->trainOrient.z);
-
+    offset.y = -cos(theta);
+    offset.z =  sin(theta) * sin(phi);
+    gluLookAt(this->trainPos.x, this->trainPos.y + 2.0f, this->trainPos.z, this->trainPos.x + offset.x, this->trainPos.y + 2.0f + offset.y, this->trainPos.z + offset.z, this->trainOrient.x, this->trainOrient.y, this->trainOrient.z);
 }

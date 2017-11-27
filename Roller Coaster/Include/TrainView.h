@@ -64,7 +64,7 @@ private:
     inline Pnt3f Cardinal(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t);
     inline Pnt3f Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t);
     void drawTrack(bool);
-    void drawTrain();
+    void drawTrain(bool drawingTrain);
     void trainCamView(float);
 
 public:
