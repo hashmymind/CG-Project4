@@ -281,7 +281,11 @@ void TrainView::drawTrack(bool doingShadows) {
 			}
 			else if (this->track == 2) {
 				// plane
-
+				glLineWidth(5);
+				glBegin(GL_LINES);
+				glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
+				glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
+				glEnd();
 			}
             glLineWidth(1);
         }
