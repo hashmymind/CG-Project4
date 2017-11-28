@@ -88,8 +88,8 @@ public:
     float tPos; // 0 ~ 1 代表在整個軌道迴圈的位置
 	vector<float> arclen; // use after drawTrack was called
     Model *m;
-    Pnt3f trainPos, trainOrient;
-    Pnt3f trainDir;
+    Pnt3f trainPos;
+    Pnt3f trainBasisX, trainBasisY, trainBasisZ;
 
     float verticalDir, horizontalDir;
 

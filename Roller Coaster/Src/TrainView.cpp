@@ -352,15 +352,23 @@ void TrainView::drawTrain(bool drawingTrain) {
     calcTrain(qt, orient, this->tPos);
     // Update cureent train coordinate.
     this->trainPos = qt;
-    this->trainOrient = orient;
+    this->trainBasisY = orient;
+    this->trainBasisY.normalize();
     // Update train direction.
     float nextT = advanceTrain();
     calcTrain(qt, orient, nextT);
-    this->trainDir = qt - this->trainPos;
+    this->trainBasisZ = qt - this->trainPos;
+    this->trainBasisZ.normalize();
+    // Cross get X.
+    this->trainBasisX = this->trainBasisZ * this->trainBasisY;
+    this->trainBasisX.normalize();
     // Draw.
     if (drawingTrain) {
 		glColor3ub(60, 60, 60);
+        
+        
 		m->setPosi(Point3d(qt.x, qt.y, qt.z));
+        m->set_base(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
 		m->draw();
         
     }
@@ -461,17 +469,12 @@ void TrainView::trainCamView(float aspect) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    this->trainDir.normalize();
-    // cross 得到相對X軸
-    this->trainOrient.normalize();
-    Pnt3f cross = this->trainDir * this->trainOrient;
-    cross.normalize();
     // Rotation.
     QMatrix4x4 rotateMatrix;
-    rotateMatrix.rotate(this->horizontalDir, this->trainOrient.x, this->trainOrient.y, this->trainOrient.z);
-    rotateMatrix.rotate(this->verticalDir, cross.x, cross.y, cross.z);
+    rotateMatrix.rotate(this->horizontalDir, this->trainBasisY.x, this->trainBasisY.y, this->trainBasisY.z); // Rotate Y.
+    rotateMatrix.rotate(this->verticalDir, trainBasisX.x, trainBasisX.y, trainBasisX.z); // Rotate X.
 
-    Pnt3f direction = this->trainDir;
+    Pnt3f direction = this->trainBasisZ;
     QVector3D v(direction.x, direction.y, direction.z);
     v = rotateMatrix * v;
     direction.x = v.x();
@@ -482,10 +485,10 @@ void TrainView::trainCamView(float aspect) {
     const float OFFSET_X = 0.0f;
     const float OFFSET_Y = 2.0f;
     const float OFFSET_Z = 0.0f;
-    offset = cross * OFFSET_X + this->trainOrient * OFFSET_Y + this->trainDir * OFFSET_Z;
+    offset = trainBasisX * OFFSET_X + this->trainBasisY * OFFSET_Y + this->trainBasisZ * OFFSET_Z;
 
     Pnt3f pos = this->trainPos + offset;
     Pnt3f center = this->trainPos + offset + direction;
-    Pnt3f up = this->trainOrient;
+    Pnt3f up = this->trainBasisY;
     gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, up.x, up.y, up.z);
 }
