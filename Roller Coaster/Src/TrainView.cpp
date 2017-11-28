@@ -1,7 +1,6 @@
 #include "TrainView.h"  
 
 
-
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
 {  
@@ -203,6 +202,7 @@ void TrainView::drawStuff(bool doingShadows)
 	drawTrack(doingShadows);
     // draw train.
 	drawTrain(this->camera != 2);// don't draw the train if you're looking out the front window
+    //ParticleSpace::DrawParticles();
 }
 void TrainView::calcPosition(Pnt3f& qt, Pnt3f& orient, Pnt3f cpPos[4], Pnt3f cpOrient[4], float t, spline_t& type_spline) {
     switch (type_spline) {
@@ -360,8 +360,8 @@ void TrainView::drawTrain(bool drawingTrain) {
     if (drawingTrain) {
         // Train color.
         glColor3ub(60, 60, 60);
-		m = new Model(QString("mod/train.obj"), 20, Point3d(qt.x, qt.y, qt.z));
-		m->render(false, false);
+		//m = new Model(QString("mod/train.obj"), 20, Point3d(qt.x, qt.y, qt.z));
+		//m->render(false, false);
         /*glColor3ub(255, 255, 255);
         glBegin(GL_QUADS);
         // [TODO] draw train.
@@ -497,5 +497,6 @@ void TrainView::trainCamView(float aspect) {
 
     Pnt3f pos = this->trainPos + offset;
     Pnt3f center = this->trainPos + offset + direction;
-    gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, this->trainOrient.x, this->trainOrient.y, this->trainOrient.z);
+    Pnt3f up = this->trainOrient;
+    gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, up.x, up.y, up.z);
 }

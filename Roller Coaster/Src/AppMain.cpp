@@ -4,7 +4,7 @@
 #include "Track.H"
 #include <math.h>
 #include <time.h>
-#include<iostream>
+#include <iostream>
 
 
 AppMain* AppMain::Instance = NULL;
@@ -81,8 +81,8 @@ bool AppMain::eventFilter(QObject *watched, QEvent *e) {
         this->UpdateMouse();
         this->trainview->horizontalDir += mOffsetX / -8.0f;
         this->trainview->verticalDir +=  mOffsetY / -8.0f;
-        if (this->trainview->verticalDir > 80) { this->trainview->verticalDir = 80; }
-        else if (this->trainview->verticalDir < -80) { this->trainview->verticalDir = -80; }
+        if (this->trainview->verticalDir > 60) { this->trainview->verticalDir = 60; }
+        else if (this->trainview->verticalDir < -60) { this->trainview->verticalDir = -60; }
     }
 	if (e->type() == QEvent::MouseButtonPress) {
 		QMouseEvent *event = static_cast<QMouseEvent*> (e);
@@ -176,6 +176,10 @@ bool AppMain::eventFilter(QObject *watched, QEvent *e) {
                  break;
              case Qt::Key_R:
                  this->SwitchPlayAndPause();
+                 break;
+             case Qt::Key_P:
+                 /*ParticleSpace::Particle p;
+                 ParticleSpace::InitParticle(p);*/
                  break;
          }
 		

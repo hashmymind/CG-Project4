@@ -13,6 +13,7 @@
 #include "Utilities/3DUtils.H"
 #include "Track.H"
 #include "Model.h"
+//#include "Particle.cpp"
 
 using std::vector;
 
@@ -92,7 +93,7 @@ public:
 
     float verticalDir, horizontalDir;
 
-    const int DIVIDE_LINE = 5000;
+    const int DIVIDE_LINE = 100;
 	const float INTERVAL = 5.0;
 	const float TRACK_WIDTH = 2;
 };  

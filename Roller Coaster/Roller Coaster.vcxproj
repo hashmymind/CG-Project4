@@ -180,6 +180,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Src\AppMain.cpp" />
     <ClCompile Include="Src\ControlPoint.cpp" />
     <ClCompile Include="Src\main.cpp" />
