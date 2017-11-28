@@ -262,7 +262,7 @@ void TrainView::drawTrack(bool doingShadows) {
             cross = cross * 2.5f;
             // Draw.
 			if (j == 0)continue;
-            glLineWidth(3);
+            glLineWidth(5);
             glBegin(GL_LINES);
             if (!doingShadows) {
                 glColor3ub(32, 32, 64);
@@ -275,10 +275,13 @@ void TrainView::drawTrack(bool doingShadows) {
             glEnd();
 			if (this->track == 1 && intervalCount > INTERVAL) {
 				// track
-				glBegin(GL_LINES);
+				glBegin(GL_POLYGON);
 				intervalCount = 0;
-				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
+				Pnt3f vqt = (2.0/dist) * (qt0 - qt1);
 				glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
+				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
+				glVertex3f(qt0.x + cross.x + vqt.x, qt0.y + cross.y+ vqt.y, qt0.z + cross.z+ vqt.z);
+				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y+ vqt.y, qt0.z - cross.z+ vqt.z);
 				glEnd();
 
 			}
