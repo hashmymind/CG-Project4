@@ -343,13 +343,21 @@ float TrainView::advanceTrain() {
     size_t i;
     for (i = 0; tt > 1; tt -= 1) { i++; }
     t += (this->velocity / this->m_pTrack->points.size() / (this->arclen[i]));
-
     if (t > 1.0f) {
         t -= 1.0f;
     } else if (t < 0.0f) {
         t += 1.0f;
     }
     return t;
+}
+void TrainView::trainGravity() {
+    this->velocity -= this->trainBasisZ.y * this->G;
+    if (this->velocity < this->oriVelocity * this->minimumVelocityRate) {
+        this->velocity = this->oriVelocity * this->minimumVelocityRate;
+    } /*else if (this->trainview->velocity > this->trainview->oriVelocity) { // ªý¤O
+      this->trainview->velocity -= this->trainview->G / 4;
+      if (this->trainview->velocity < this->trainview->oriVelocity) { this->trainview->velocity = this->trainview->oriVelocity; }
+      }*/
 }
 void TrainView::drawTrain(bool drawingTrain) {
     Pnt3f qt, orient;
@@ -500,6 +508,9 @@ void TrainView::trainCamView(float aspect) {
     direction.x = v.x();
     direction.y = v.y();
     direction.z = v.z();
+    v = QVector3D(this->trainBasisY.x, this->trainBasisY.y, this->trainBasisY.z);
+    v = rotateMatrix * v;
+    Pnt3f up(v.x(), v.y(), v.z());
     // ©T©w¦ì²¾
     Pnt3f offset;
     const float OFFSET_X = 0.0f;
@@ -509,6 +520,6 @@ void TrainView::trainCamView(float aspect) {
 
     Pnt3f pos = this->trainPos + offset;
     Pnt3f center = this->trainPos + offset + direction;
-    Pnt3f up = this->trainBasisY;
+    //Pnt3f up = this->trainBasisY + direction;
     gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, up.x, up.y, up.z);
 }

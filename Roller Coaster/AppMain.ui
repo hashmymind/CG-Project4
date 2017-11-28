@@ -1049,7 +1049,7 @@ QPushButton:pressed {
      <x>0</x>
      <y>0</y>
      <width>1028</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1089,6 +1089,9 @@ QPushButton:pressed {
     <property name="title">
      <string>Velocity</string>
     </property>
+    <addaction name="actionSlow"/>
+    <addaction name="actionNormal"/>
+    <addaction name="actionFast"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuCamera"/>
@@ -1212,6 +1215,24 @@ QPushButton:pressed {
    </property>
    <property name="text">
     <string>Road</string>
+   </property>
+  </action>
+  <action name="actionSlow">
+   <property name="text">
+    <string>Slow</string>
+   </property>
+  </action>
+  <action name="actionNormal">
+   <property name="text">
+    <string>Normal</string>
+   </property>
+  </action>
+  <action name="actionFast">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Fast</string>
    </property>
   </action>
  </widget>

@@ -62,7 +62,7 @@ public:
 	void initializeGL();
 
     float advanceTrain();
-
+    void trainGravity();
 private:
     inline Pnt3f Linear(Pnt3f p1, Pnt3f p2, float t);
     inline Pnt3f Cardinal(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t);
@@ -84,7 +84,13 @@ public:
 	int track;
 	bool isrun;
     // Velocity
-    float velocity;
+    float velocity, oriVelocity;
+    const float G = 0.1f; // Gravity.
+    const float minimumVelocityRate = 0.4f; // 受重力影響後火車運行的最低速度比率
+    // Min & Max(for slider control.)
+    const float minVelocity = 1.0f;
+    const float maxVelocity = 25.0f;
+
     float tPos; // 0 ~ 1 代表在整個軌道迴圈的位置
 	vector<float> arclen; // use after drawTrack was called
     Model *m;

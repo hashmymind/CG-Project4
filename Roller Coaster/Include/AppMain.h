@@ -55,7 +55,6 @@ private:
 	void UpdateCameraState( int index );
 	void UpdateCurveState( int index );
 	void UpdateTrackState( int index );
-	void UpdateVelocityState( int index );
     void UpdateMouse();
 	void rollx( float dir );
 	void rollz( float dir );
@@ -91,6 +90,10 @@ private:
 		void RotateControlPointSubX();
 		void RotateControlPointAddZ();
 		void RotateControlPointSubZ();
+
+        void ChangeSpeedSlow();
+        void ChangeSpeedNormal();
+        void ChangeSpeedFast();
 
         void TrainRun();
 

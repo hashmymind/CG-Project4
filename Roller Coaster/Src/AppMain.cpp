@@ -27,6 +27,7 @@ AppMain::AppMain(QWidget *parent)
     this->trainview->tPos = 0;
     this->trainview->verticalDir = 0;
     this->trainview->horizontalDir = 0;
+    this->trainview->velocity = this->trainview->oriVelocity = (this->trainview->minVelocity + this->trainview->maxVelocity) / 2;
     this->lockCursor = false;
     this->mOffsetX = 0;
     this->mOffsetY = 0;
@@ -68,6 +69,12 @@ AppMain::AppMain(QWidget *parent)
 	connect( ui.rcpxsub		,SIGNAL(clicked()),this,SLOT(RotateControlPointSubX())				);
 	connect( ui.rcpzadd		,SIGNAL(clicked()),this,SLOT(RotateControlPointAddZ())					);
 	connect( ui.rcpzsub		,SIGNAL(clicked()),this,SLOT(RotateControlPointSubZ())				);
+
+    connect(ui.actionSlow, SIGNAL(triggered()), this, SLOT(ChangeSpeedSlow()));
+    connect(ui.actionNormal, SIGNAL(triggered()), this, SLOT(ChangeSpeedNormal()));
+    connect(ui.actionFast, SIGNAL(triggered()), this, SLOT(ChangeSpeedFast()));
+
+
 }
 
 AppMain::~AppMain()
@@ -335,12 +342,15 @@ void AppMain::SwitchPlayAndPause()
 {
 	this->trainview->isrun = !(this->trainview->isrun);
 	ui.bPlay->setIcon(!this->trainview->isrun ? QIcon(":/AppMain/Resources/Icons/play.ico") : QIcon(":/AppMain/Resources/Icons/pause.ico"));
+    if (this->trainview->isrun) { this->trainview->velocity = this->trainview->oriVelocity; }
     std::cout << (this->trainview->isrun ? "Run\n" : "Stop\n");
 }
 
 void AppMain::ChangeSpeedOfTrain( int val )
 {
-	//m_rollerCoaster->trainSpeed = m_rollerCoaster->MAX_TRAIN_SPEED * float(val) / 100.0f;
+    // val in 0 ~ 99
+    this->trainview->oriVelocity = this->trainview->minVelocity + (this->trainview->maxVelocity - this->trainview->minVelocity) * ((float) val / 100.0f);
+    this->trainview->velocity = this->trainview->oriVelocity;
 }
 
 void AppMain::AddControlPoint()
@@ -430,6 +440,18 @@ void AppMain::RotateControlPointSubZ()
 	rollz(-1);
 }
 
+void AppMain::ChangeSpeedSlow() {
+    ui.sSpeed->setValue(0);
+}
+
+void AppMain::ChangeSpeedNormal() {
+    ui.sSpeed->setValue(50);
+}
+
+void AppMain::ChangeSpeedFast() {
+    ui.sSpeed->setValue(99);
+}
+
 void AppMain::ChangeCamToWorld()
 {
     this->ui.comboCamera->setCurrentText("World");
@@ -508,10 +530,11 @@ void AppMain::UpdateTrackState( int index )
 }
 void AppMain::TrainRun() {
     if (this->trainview->isrun) {
-        this->trainview->velocity = ui.sSpeed->value() / 25.0f;
         this->trainview->tPos = this->trainview->advanceTrain(); // Advance train.
+        this->trainview->trainGravity(); // Gravity.
     }
 }
+
 
 void AppMain::UpdateMouse() {
     static bool last;
