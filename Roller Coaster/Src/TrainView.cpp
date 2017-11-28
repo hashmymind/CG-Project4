@@ -11,6 +11,7 @@ TrainView::~TrainView()
 {}  
 void TrainView::initializeGL()
 {
+	m = new Model(QString("mod/train.obj"), 20, Point3d());
 	initializeOpenGLFunctions();
 }
 void TrainView:: resetArcball()
@@ -348,8 +349,8 @@ void TrainView::drawTrain(bool drawingTrain) {
     this->trainDir = qt - this->trainPos;
     // Draw.
     if (drawingTrain) {
-		m = new Model(QString("mod/train.obj"), 20, Point3d(qt.x, qt.y, qt.z));
-		m->render(false, false);
+		m->setPosi(Point3d(qt.x, qt.y, qt.z));
+		m->draw();
         /*glColor3ub(255, 255, 255);
         glBegin(GL_QUADS);
         // [TODO] draw train.
