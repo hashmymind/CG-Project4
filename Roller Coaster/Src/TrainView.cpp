@@ -265,7 +265,8 @@ void TrainView::drawTrack(bool doingShadows) {
             glLineWidth(5);
             glBegin(GL_LINES);
             if (!doingShadows) {
-                glColor3ub(32, 32, 64);
+                // Spline color.
+                glColor3ub(66, 22, 0);
             }
             glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
             glVertex3f(qt1.x + cross.x, qt1.y + cross.y, qt1.z + cross.z);
@@ -274,18 +275,27 @@ void TrainView::drawTrack(bool doingShadows) {
             glVertex3f(qt1.x - cross.x, qt1.y - cross.y, qt1.z - cross.z);
             glEnd();
 			if (this->track == 1 && intervalCount > INTERVAL) {
+                if (!doingShadows) {
+                    // Track color.
+                    glColor3ub(100, 33, 0);
+                }
 				// track
 				glBegin(GL_POLYGON);
 				intervalCount = 0;
-				Pnt3f vqt = (2.0/dist) * (qt0 - qt1);
+				Pnt3f vqt = (2.0 / dist) * (qt0 - qt1);
+                cross = cross * 1.4f;
 				glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
 				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
-				glVertex3f(qt0.x + cross.x + vqt.x, qt0.y + cross.y+ vqt.y, qt0.z + cross.z+ vqt.z);
-				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y+ vqt.y, qt0.z - cross.z+ vqt.z);
+				glVertex3f(qt0.x + cross.x + vqt.x, qt0.y + cross.y + vqt.y, qt0.z + cross.z + vqt.z);
+				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y + vqt.y, qt0.z - cross.z + vqt.z);
 				glEnd();
 
 			}
 			else if (this->track == 2) {
+                if (!doingShadows) {
+                    // Track color.
+                    glColor3ub(32, 32, 64);
+                }
 				// plane
 				glLineWidth(5);
 				glBegin(GL_LINES);
@@ -348,6 +358,8 @@ void TrainView::drawTrain(bool drawingTrain) {
     this->trainDir = qt - this->trainPos;
     // Draw.
     if (drawingTrain) {
+        // Train color.
+        glColor3ub(60, 60, 60);
 		m = new Model(QString("mod/train.obj"), 20, Point3d(qt.x, qt.y, qt.z));
 		m->render(false, false);
         /*glColor3ub(255, 255, 255);
