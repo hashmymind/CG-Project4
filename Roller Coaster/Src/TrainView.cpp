@@ -1,7 +1,6 @@
 #include "TrainView.h"  
 
 
-
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
 {  
@@ -204,6 +203,7 @@ void TrainView::drawStuff(bool doingShadows)
 	drawTrack(doingShadows);
     // draw train.
 	drawTrain(this->camera != 2);// don't draw the train if you're looking out the front window
+    //ParticleSpace::DrawParticles();
 }
 void TrainView::calcPosition(Pnt3f& qt, Pnt3f& orient, Pnt3f cpPos[4], Pnt3f cpOrient[4], float t, spline_t& type_spline) {
     switch (type_spline) {
@@ -266,7 +266,8 @@ void TrainView::drawTrack(bool doingShadows) {
             glLineWidth(5);
             glBegin(GL_LINES);
             if (!doingShadows) {
-                glColor3ub(32, 32, 64);
+                // Spline color.
+                glColor3ub(66, 22, 0);
             }
             glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
             glVertex3f(qt1.x + cross.x, qt1.y + cross.y, qt1.z + cross.z);
@@ -275,18 +276,27 @@ void TrainView::drawTrack(bool doingShadows) {
             glVertex3f(qt1.x - cross.x, qt1.y - cross.y, qt1.z - cross.z);
             glEnd();
 			if (this->track == 1 && intervalCount > INTERVAL) {
+                if (!doingShadows) {
+                    // Track color.
+                    glColor3ub(100, 33, 0);
+                }
 				// track
 				glBegin(GL_POLYGON);
 				intervalCount = 0;
-				Pnt3f vqt = (2.0/dist) * (qt0 - qt1);
+				Pnt3f vqt = (2.0 / dist) * (qt0 - qt1);
+                cross = cross * 1.4f;
 				glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
 				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
-				glVertex3f(qt0.x + cross.x + vqt.x, qt0.y + cross.y+ vqt.y, qt0.z + cross.z+ vqt.z);
-				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y+ vqt.y, qt0.z - cross.z+ vqt.z);
+				glVertex3f(qt0.x + cross.x + vqt.x, qt0.y + cross.y + vqt.y, qt0.z + cross.z + vqt.z);
+				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y + vqt.y, qt0.z - cross.z + vqt.z);
 				glEnd();
 
 			}
 			else if (this->track == 2) {
+                if (!doingShadows) {
+                    // Track color.
+                    glColor3ub(32, 32, 64);
+                }
 				// plane
 				glLineWidth(5);
 				glBegin(GL_LINES);
@@ -349,20 +359,10 @@ void TrainView::drawTrain(bool drawingTrain) {
     this->trainDir = qt - this->trainPos;
     // Draw.
     if (drawingTrain) {
+		glColor3ub(60, 60, 60);
 		m->setPosi(Point3d(qt.x, qt.y, qt.z));
 		m->draw();
-        /*glColor3ub(255, 255, 255);
-        glBegin(GL_QUADS);
-        // [TODO] draw train.
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(this->trainPos.x - 5, this->trainPos.y - 5, this->trainPos.z - 5);
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(this->trainPos.x + 5, this->trainPos.y - 5, this->trainPos.z - 5);
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex3f(this->trainPos.x + 5, this->trainPos.y + 5, this->trainPos.z - 5);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(this->trainPos.x - 5, this->trainPos.y + 5, this->trainPos.z - 5);
-        glEnd();*/
+        
     }
 }
 
@@ -486,5 +486,6 @@ void TrainView::trainCamView(float aspect) {
 
     Pnt3f pos = this->trainPos + offset;
     Pnt3f center = this->trainPos + offset + direction;
-    gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, this->trainOrient.x, this->trainOrient.y, this->trainOrient.z);
+    Pnt3f up = this->trainOrient;
+    gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, up.x, up.y, up.z);
 }
