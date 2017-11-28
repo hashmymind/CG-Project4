@@ -178,8 +178,7 @@ bool AppMain::eventFilter(QObject *watched, QEvent *e) {
                  this->SwitchPlayAndPause();
                  break;
              case Qt::Key_P:
-                 /*ParticleSpace::Particle p;
-                 ParticleSpace::InitParticle(p);*/
+                 //Particle::ProcessParticles();
                  break;
          }
 		
