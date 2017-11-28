@@ -31,6 +31,7 @@ public:
 
 private:
     QString m_fileName;
+	QVector<Point3d> ori_m_points;
     QVector<Point3d> m_points;
     QVector<Point3d> m_normals;
     QVector<int> m_edgeIndices;
@@ -39,7 +40,7 @@ private:
     QVector<Point3d> n_normals;
 	int scale;
 	Point3d posi;
-
+	Pnt3f bx, by, bz;
 };
 
 #endif

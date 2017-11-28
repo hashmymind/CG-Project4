@@ -63,33 +63,72 @@ Model::Model(const QString &filePath, int s, Point3d p)
                     m_pointIndices << p[(i + 2) % 4];
         }
     }
-
+	this->ori_m_points = this->m_points;
 	this->update();
 
 
 }
 void Model::set_base(Pnt3f x, Pnt3f y, Pnt3f z) {
-    Pnt3f p;
-    for (int i = 0; i < m_points.size(); ++i) {
-        p = x*m_points[i].x + y*m_points[i].y + z*m_points[i].z;
-        n_points[i] = Point3d(p.x, p.y, p.z);
-    }
-    for (int i = 0; i < m_normals.size(); ++i) {
-        p = x*m_normals[i].x + y*m_normals[i].y + z*m_normals[i].z;
-        n_normals[i] = Point3d(p.x, p.y, p.z);
-    }
+	this->bx = x;
+	this->by = y;
+	this->bz = z;
+    
 }
 
 void Model::update() {
 	int s = this->scale;
 	Point3d p = this->posi;
 	const Point3d bounds = boundsMax - boundsMin;
-	const qreal scale = s / qMax(bounds.x, qMax(bounds.y, bounds.z));
-
+	const qreal sc = s / qMax(bounds.x, qMax(bounds.y, bounds.z));
+	Pnt3f tmp;
 	n_points.clear();
-	for (int i = 0; i < m_points.size(); ++i) {
-		n_points.push_back((m_points[i] + p - (boundsMin + bounds * 0.5)) * scale);
+	for (int i = 0; i < ori_m_points.size(); ++i) {
+		
+
+		tmp = this->bx*ori_m_points[i].x + this->by*ori_m_points[i].y + this->bz*ori_m_points[i].z;
+
+		m_points[i] = (Point3d(tmp.x, tmp.y, tmp.z) + p - (boundsMin + bounds * 0.5)) * sc;
+		/*QMatrix4x4 mt;
+		mt.rotate(this->bx.x, this->bx.y, this->bx.z);
+		mt.rotate(this->by.x, this->by.y, this->by.z);
+		mt.rotate(this->bz.x, this->bz.y, this->bz.z);
+		QVector3D v(m_points[i].x, m_points[i].y, m_points[i].z);
+		v = mt * v;
+		tmp.x = v.x();
+		tmp.y = v.y();
+		tmp.z = v.z();*/
+
+		n_points.push_back(m_points[i]);
 	}
+
+	m_normals.resize(m_points.size());
+	n_normals.clear();
+	for (int i = 0; i < m_pointIndices.size(); i += 3) {
+		const Point3d a = m_points.at(m_pointIndices.at(i));
+		const Point3d b = m_points.at(m_pointIndices.at(i + 1));
+		const Point3d c = m_points.at(m_pointIndices.at(i + 2));
+
+		const Point3d normal = cross(b - a, c - a).normalize();
+
+		for (int j = 0; j < 3; ++j)
+			m_normals[m_pointIndices.at(i + j)] += normal;
+	}
+
+	for (int i = 0; i < m_normals.size(); ++i) {
+		m_normals[i] = m_normals[i].normalize();
+		n_normals.push_back(m_normals[i]);
+	}
+
+
+	/*Pnt3f tmp;
+	for (int i = 0; i < m_points.size(); ++i) {
+		tmp = this->bx*m_points[i].x + this->by*m_points[i].y + this->bz*m_points[i].z;
+		n_points[i] = Point3d(tmp.x, tmp.y, tmp.z);
+	}
+	for (int i = 0; i < m_normals.size(); ++i) {
+		tmp = this->bx*m_normals[i].x + this->by*m_normals[i].y + this->bz*m_normals[i].z;
+		n_normals[i] = Point3d(tmp.x, tmp.y, tmp.z);
+	}*/
 }
 
 void Model::setPosi(Point3d p) {

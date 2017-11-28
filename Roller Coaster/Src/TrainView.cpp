@@ -10,7 +10,7 @@ TrainView::~TrainView()
 {}  
 void TrainView::initializeGL()
 {
-	m = new Model(QString("mod/train.obj"), 20, Point3d());
+	m = new Model(QString("mod/train.obj"), 18, Point3d());
 	initializeOpenGLFunctions();
 }
 void TrainView:: resetArcball()
@@ -298,10 +298,13 @@ void TrainView::drawTrack(bool doingShadows) {
                     glColor3ub(32, 32, 64);
                 }
 				// plane
-				glLineWidth(5);
-				glBegin(GL_LINES);
-				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
+				glBegin(GL_POLYGON);
+				Pnt3f vqt = (qt0 - qt1);
+				cross = cross * 1.4f;
 				glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
+				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
+				glVertex3f(qt0.x + cross.x + vqt.x, qt0.y + cross.y + vqt.y, qt0.z + cross.z + vqt.z);
+				glVertex3f(qt0.x - cross.x + vqt.x, qt0.y - cross.y + vqt.y, qt0.z - cross.z + vqt.z);
 				glEnd();
 			}
             glLineWidth(1);
@@ -367,8 +370,30 @@ void TrainView::drawTrain(bool drawingTrain) {
 		glColor3ub(60, 60, 60);
         
         
-		m->setPosi(Point3d(qt.x, qt.y, qt.z));
-        m->set_base(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
+		
+       
+		glBegin(GL_LINES);
+
+		/*Pnt3f xx, yy, zz;
+		xx = this->trainBasisX * 20;
+		xx = xx + qt;
+		yy = this->trainBasisY * 20;
+		yy = yy + qt;
+		zz = this->trainBasisZ * 20;
+		zz = zz + qt;
+		glColor3ub(60, 60, 60);
+		glVertex3f(qt.x,qt.y, qt.z);
+		glVertex3f(xx.x , xx.y, xx.z);
+		glColor3ub(120, 120, 120);
+		glVertex3f(qt.x, qt.y, qt.z);
+		glVertex3f(yy.x, yy.y, yy.z);
+		glColor3ub(240, 240, 240);
+		glVertex3f(qt.x, qt.y, qt.z);
+		glVertex3f(zz.x, zz.y, zz.z);
+		glEnd();*/
+		m->set_base(this->trainBasisX, this->trainBasisY, -1*this->trainBasisZ);
+		m->setPosi(Point3d(qt.x, qt.y + 5, qt.z));
+		glColor3ub(60, 60, 60);
 		m->draw();
         
     }
@@ -473,7 +498,6 @@ void TrainView::trainCamView(float aspect) {
     QMatrix4x4 rotateMatrix;
     rotateMatrix.rotate(this->horizontalDir, this->trainBasisY.x, this->trainBasisY.y, this->trainBasisY.z); // Rotate Y.
     rotateMatrix.rotate(this->verticalDir, trainBasisX.x, trainBasisX.y, trainBasisX.z); // Rotate X.
-
     Pnt3f direction = this->trainBasisZ;
     QVector3D v(direction.x, direction.y, direction.z);
     v = rotateMatrix * v;
