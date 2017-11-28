@@ -13,7 +13,7 @@
 #include "Utilities/3DUtils.H"
 #include "Track.H"
 #include "Model.h"
-//#include "Particle.cpp"
+#include "Particle.h"
 
 using std::vector;
 
@@ -90,8 +90,9 @@ public:
     Model *m;
     Pnt3f trainPos;
     Pnt3f trainBasisX, trainBasisY, trainBasisZ;
-
     float verticalDir, horizontalDir;
+
+    ParticleSystem* particle;
 
     const int DIVIDE_LINE = 100;
 	const float INTERVAL = 5.0;

@@ -1,6 +1,5 @@
 #include "TrainView.h"  
 
-
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
 {  
@@ -11,6 +10,7 @@ TrainView::~TrainView()
 void TrainView::initializeGL()
 {
 	m = new Model(QString("mod/train.obj"), 18, Point3d());
+    this->particle = new ParticleSystem;
 	initializeOpenGLFunctions();
 }
 void TrainView:: resetArcball()
@@ -111,14 +111,16 @@ void TrainView::paintGL()
 
 	drawStuff();
 
+    // Particle.
+    particle->ProcessParticles();
+    particle->DrawParticles();
+
 	// this time drawing is for shadows (except for top view)
 	if (this->camera != 1) {
 		setupShadows();
 		drawStuff(true);
 		unsetupShadows();
 	}
-
-	
 }
 
 //************************************************************************
@@ -203,7 +205,6 @@ void TrainView::drawStuff(bool doingShadows)
 	drawTrack(doingShadows);
     // draw train.
 	drawTrain(this->camera != 2);// don't draw the train if you're looking out the front window
-    //ParticleSpace::DrawParticles();
 }
 void TrainView::calcPosition(Pnt3f& qt, Pnt3f& orient, Pnt3f cpPos[4], Pnt3f cpOrient[4], float t, spline_t& type_spline) {
     switch (type_spline) {
@@ -368,10 +369,6 @@ void TrainView::drawTrain(bool drawingTrain) {
     // Draw.
     if (drawingTrain) {
 		glColor3ub(60, 60, 60);
-        
-        
-		
-       
 		/*glBegin(GL_LINES);
 
 		Pnt3f xx, yy, zz;
@@ -395,7 +392,6 @@ void TrainView::drawTrain(bool drawingTrain) {
 		m->setPosi(Point3d(qt.x, qt.y + 5, qt.z));
 		glColor3ub(60, 60, 60);
 		m->draw();
-        
     }
 }
 
