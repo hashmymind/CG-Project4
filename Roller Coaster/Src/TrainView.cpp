@@ -345,7 +345,9 @@ void TrainView::drawTrain(bool drawingTrain) {
     this->trainDir = qt - this->trainPos;
     // Draw.
     if (drawingTrain) {
-        glColor3ub(255, 255, 255);
+		m = new Model(QString("mod/train.obj"), 20, Point3d(qt.x, qt.y, qt.z));
+		m->render(false, false);
+        /*glColor3ub(255, 255, 255);
         glBegin(GL_QUADS);
         // [TODO] draw train.
         glTexCoord2f(0.0f, 0.0f);
@@ -356,7 +358,7 @@ void TrainView::drawTrain(bool drawingTrain) {
         glVertex3f(this->trainPos.x + 5, this->trainPos.y + 5, this->trainPos.z - 5);
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(this->trainPos.x - 5, this->trainPos.y + 5, this->trainPos.z - 5);
-        glEnd();
+        glEnd();*/
     }
 }
 

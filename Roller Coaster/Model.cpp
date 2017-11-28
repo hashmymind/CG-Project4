@@ -10,11 +10,9 @@
 using namespace std;
 Model::Model(const QString &filePath, int s, Point3d p)
     : m_fileName(QFileInfo(filePath).fileName()) {
-    cout << "LOAD!!\n";
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly))
         return;
-    cout << "OPEN!!\n";
     Point3d boundsMin(1e9, 1e9, 1e9);
     Point3d boundsMax(-1e9, -1e9, -1e9);
 
