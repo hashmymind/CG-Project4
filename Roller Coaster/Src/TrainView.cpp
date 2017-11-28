@@ -372,9 +372,9 @@ void TrainView::drawTrain(bool drawingTrain) {
         
 		
        
-		glBegin(GL_LINES);
+		/*glBegin(GL_LINES);
 
-		/*Pnt3f xx, yy, zz;
+		Pnt3f xx, yy, zz;
 		xx = this->trainBasisX * 20;
 		xx = xx + qt;
 		yy = this->trainBasisY * 20;
