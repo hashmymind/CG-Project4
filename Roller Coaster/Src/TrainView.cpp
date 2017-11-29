@@ -9,7 +9,7 @@ TrainView::~TrainView()
 {}  
 void TrainView::initializeGL()
 {
-	m = new Model(QString("mod/train.obj"), 18, Point3d());
+	m = new Model(QString("mod/train.obj"), 25, Point3d());
     this->particle = new ParticleSystem;
 	initializeOpenGLFunctions();
 }
@@ -242,11 +242,16 @@ void TrainView::drawTrack(bool doingShadows) {
             this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].orient // for G
         };
 
+		// support construction
+
+
+		//
+
         float percent = 1.0f / DIVIDE_LINE;
         float t = 0;
 
 		float partialLen = 0,intervalCount = 0;
-
+		
         Pnt3f qt, orient;
         for (size_t j = 0; j < DIVIDE_LINE; j++) {
             t += percent;
@@ -302,7 +307,7 @@ void TrainView::drawTrack(bool doingShadows) {
                 }
 				// plane
 				glBegin(GL_POLYGON);
-				Pnt3f vqt = (qt0 - qt1);
+				Pnt3f vqt = (qt0 - qt1)*2;
 				cross = cross * 1.4f;
 				glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
 				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
@@ -399,7 +404,7 @@ void TrainView::drawTrain(bool drawingTrain) {
 		glVertex3f(zz.x, zz.y, zz.z);
 		glEnd();*/
 		m->set_base(this->trainBasisX, this->trainBasisY, -1*this->trainBasisZ);
-		m->setPosi(Point3d(qt.x, qt.y + 5, qt.z));
+		m->setPosi(Point3d(qt.x, qt.y + 90, qt.z));
 		glColor3ub(60, 60, 60);
 		m->draw();
     }
