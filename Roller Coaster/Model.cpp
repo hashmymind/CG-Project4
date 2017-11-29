@@ -65,10 +65,9 @@ Model::Model(const QString &filePath, int s, Point3d p)
 					m_pointIndices << p[(i + 2) % 4];
 		}
 	}
+
 	this->ori_m_points = this->m_points;
 	this->update();
-
-
 }
 void Model::set_base(Pnt3f x, Pnt3f y, Pnt3f z) {
 	this->bx = x;
@@ -96,6 +95,7 @@ void Model::update() {
 	m_normals.clear();
 	m_normals.resize(m_points.size());
 	n_normals.clear();
+
 	for (int i = 0; i < m_pointIndices.size(); i += 3) {
 		const Point3d a = m_points.at(m_pointIndices.at(i));
 		const Point3d b = m_points.at(m_pointIndices.at(i + 1));
@@ -143,6 +143,11 @@ void Model::draw() {
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	*/
-	glDisableClientState(GL_VERTEX_ARRAY);
-	//glDisable(GL_DEPTH_TEST);
+     // Wireframe
+     /*glColor3f(0.6f, 0.6f, 0.6f);
+     glVertexPointer(3, GL_FLOAT, 0, (float *) n_points.data());
+     glDrawElements(GL_LINES, m_edgeIndices.size(), GL_UNSIGNED_INT, m_edgeIndices.data());*/
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    //glDisable(GL_DEPTH_TEST);
 }
