@@ -18,12 +18,12 @@ public:
 
 
     void draw();
+    void set_base(Pnt3f x, Pnt3f y, Pnt3f z);
 	void setPosi(Point3d);
 	void setScale(int);
 	void update();
 	void setOffset(Point3d);
 
-    void set_base(Pnt3f x, Pnt3f y, Pnt3f z);
     QString fileName() const { return m_fileName; }
     int faces() const { return m_pointIndices.size() / 3; }
     int edges() const { return m_edgeIndices.size() / 2; }
@@ -43,6 +43,8 @@ private:
 	Point3d posi;
 	Point3d offset;
 	Pnt3f bx, by, bz;
+
+    void render(bool wireframe = false, bool normals = false) const;
 };
 
 #endif

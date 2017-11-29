@@ -10,8 +10,9 @@ TrainView::~TrainView()
 void TrainView::initializeGL()
 {
 	initializeOpenGLFunctions();
-	m = new Model(QString("mod/train.obj"), 25, Point3d());
-	m->setOffset(Point3d(-0.5,90,0));
+	m = new Model(QString("mod/train.obj"), 1, Point3d());
+    m->setScale(25);
+	m->setOffset(Point3d(0,5,0));
     this->particle = new ParticleSystem;
     loadTexture2D("cloud3.png", this->particle->textureID);
 }
