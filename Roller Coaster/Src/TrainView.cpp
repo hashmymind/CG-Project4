@@ -255,8 +255,10 @@ void TrainView::drawTrack(bool doingShadows) {
             Pnt3f qt1 = qt;
 			// calculate partial length
 			float dist = sqrt(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2));
-			partialLen += dist;
-			intervalCount += dist;
+			if (j) {
+				partialLen += dist;
+				intervalCount += dist;
+			}
             // cross
             orient.normalize();
             Pnt3f cross = (qt1 - qt0) * orient;
@@ -354,10 +356,10 @@ void TrainView::trainGravity() {
     this->velocity -= this->trainBasisZ.y * this->G;
     if (this->velocity < this->oriVelocity * this->minimumVelocityRate) {
         this->velocity = this->oriVelocity * this->minimumVelocityRate;
-    } /*else if (this->trainview->velocity > this->trainview->oriVelocity) { // ªý¤O
-      this->trainview->velocity -= this->trainview->G / 4;
-      if (this->trainview->velocity < this->trainview->oriVelocity) { this->trainview->velocity = this->trainview->oriVelocity; }
-      }*/
+    } else if (this->velocity > this->oriVelocity) { // ªý¤O
+      this->velocity -= this->G / 6;
+      if (this->velocity < this->oriVelocity) { this->velocity = this->oriVelocity; }
+      }
 }
 void TrainView::drawTrain(bool drawingTrain) {
     Pnt3f qt, orient;
