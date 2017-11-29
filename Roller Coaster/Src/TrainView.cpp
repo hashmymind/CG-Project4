@@ -1,4 +1,5 @@
-#include "TrainView.h"  
+#include "TrainView.h"
+#include "Cube.h"
 #include<iostream>
 
 TrainView::TrainView(QWidget *parent) :  
@@ -128,6 +129,12 @@ void TrainView::paintGL()
 		drawStuff(true);
 		unsetupShadows();
 	}
+
+    // Train run.
+    if (this->isrun) {
+        this->tPos = this->advanceTrain(); // Advance train.
+        this->trainGravity(); // Gravity.
+    }
 }
 
 //************************************************************************
@@ -363,11 +370,54 @@ void TrainView::drawTrack(bool doingShadows) {
 				intervalCount = 0;
 				Pnt3f vqt = (2.0 / dist) * (qt0 - qt1);
                 cross = cross * 1.4f;
-				glVertex3f(qt0.x - cross.x, qt0.y - cross.y - 0.1, qt0.z - cross.z);
+                const float WOOD_HEIGHT = 1.0f;
+                Pnt3f vtx[8] = {
+                    qt0 + vqt + cross + Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + vqt - cross + Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 - cross + Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + cross + Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + cross - Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 - cross - Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + vqt - cross - Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + vqt +  cross - Pnt3f(0,WOOD_HEIGHT / 2,0)
+                };
+                // forward 
+                Pnt3f f = (qt1 - qt0);
+                f.normalize();
+                cross.normalize();
+                // up.
+                Pnt3f up = cross * f;
+                up.normalize();
+                Pnt3f nml[3] = { //UFR
+                    up,
+                    f,
+                    cross
+                };
+                Cube wood(vtx, nml);
+                wood.Draw();
+				/*glVertex3f(qt0.x - cross.x, qt0.y - cross.y - 0.1, qt0.z - cross.z);
 				glVertex3f(qt0.x + cross.x, qt0.y + cross.y - 0.1, qt0.z + cross.z);
 				glVertex3f(qt0.x + cross.x + vqt.x, qt0.y + cross.y + vqt.y - 0.1, qt0.z + cross.z + vqt.z);
-				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y + vqt.y - 0.1, qt0.z - cross.z + vqt.z);
+				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y + vqt.y - 0.1, qt0.z - cross.z + vqt.z);*/
 				glEnd();
+                /*glBegin(GL_LINES);
+                Pnt3f xx, yy, zz;
+                xx = up * 20;
+                xx = xx + qt0;
+                yy = f * 20;
+                yy = yy + qt0;
+                zz = cross * 20;
+                zz = zz + qt0;
+                glColor3ub(240, 240, 240);
+                glVertex3f(qt0.x, qt0.y, qt0.z);
+                glVertex3f(xx.x, xx.y, xx.z);
+                glColor3ub(0, 0, 0);
+                glVertex3f(qt0.x, qt0.y, qt0.z);
+                glVertex3f(yy.x, yy.y, yy.z);
+                glColor3ub(0, 0, 240);
+                glVertex3f(qt0.x, qt0.y, qt0.z);
+                glVertex3f(zz.x, zz.y, zz.z);
+                glEnd();*/
 
 			}
 			else if (this->track == 2) {

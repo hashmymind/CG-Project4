@@ -35,10 +35,6 @@ AppMain::AppMain(QWidget *parent)
     this->mouseX = 0;
     this->mouseY = 0;
     srand(time(NULL));
-    // Timer.
-    timer = new QTimer(this);
-    this->timer->start(20);
-    connect(timer, SIGNAL(timeout()), this, SLOT(TrainRun()));
 
 	setWindowTitle( "Roller Coaster" );
 
@@ -529,12 +525,6 @@ void AppMain::UpdateTrackState( int index )
 	ui.aLine ->setChecked( (index==0)?true:false );
 	ui.aTrack->setChecked( (index==1)?true:false );
 	ui.aRoad ->setChecked( (index==2)?true:false );
-}
-void AppMain::TrainRun() {
-    if (this->trainview->isrun) {
-        this->trainview->tPos = this->trainview->advanceTrain(); // Advance train.
-        this->trainview->trainGravity(); // Gravity.
-    }
 }
 
 void AppMain::UpdateMouse() {
