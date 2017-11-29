@@ -89,20 +89,13 @@ Model::Model(const QString &filePath, int s, Point3d p)
         n_normals.push_back(m_normals[i]);
     }
 }
-
+#include<iostream>
 void Model::draw() {
     glPushMatrix();
     glTranslatef(this->posi.x, this->posi.y, this->posi.z);
-    // Rotate axis Y.
-    float degree = (atan2(this->bz.x, this->bz.z)) * 180.0f / M_PI;
-    glRotatef(degree, 0, 1, 0);
-    // Rotate axis X.
-    degree = (atan2(this->bz.z, this->bz.y)) * 180.0f / M_PI;
-    glRotatef(degree, 1, 0, 0);
-    // Rotate axis Z.
-    /*degree = (atan2(-this->by.x, this->by.y)) * 180.0f / M_PI;
-    glRotatef(degree, 0, 0, 1);*/
-    
+    // Change basis.
+    const float fM[4 * 4] = { this->bx.x, this->bx.y, this->bx.z, 0, this->by.x, this->by.y, this->by.z, 0, this->bz.x, this->bz.y, this->bz.z, 0, 0, 0, 0, 1 };
+    glMultMatrixf(fM);
     glTranslatef(this->offset.x, this->offset.y, this->offset.z);
     glScalef(this->scale, this->scale, this->scale);
     this->render();
@@ -116,7 +109,6 @@ void Model::set_base(Pnt3f x, Pnt3f y, Pnt3f z) {
     this->bx = x;
     this->by = y;
     this->bz = z;
-
 }
 void Model::setScale(int s) {
     this->scale = s;

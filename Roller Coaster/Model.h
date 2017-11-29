@@ -21,7 +21,6 @@ public:
     void set_base(Pnt3f x, Pnt3f y, Pnt3f z);
 	void setPosi(Point3d);
 	void setScale(int);
-	void update();
 	void setOffset(Point3d);
 
     QString fileName() const { return m_fileName; }
