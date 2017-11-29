@@ -96,15 +96,19 @@ public:
     float tPos; // 0 ~ 1 代表在整個軌道迴圈的位置
 	vector<float> arclen; // use after drawTrack was called
     Model *m;
+	vector<Model*> cars;
     Pnt3f trainPos;
     Pnt3f trainBasisX, trainBasisY, trainBasisZ;
     float verticalDir, horizontalDir;
 
     ParticleSystem* particle;
 
+	Pnt3f lpt1pc, lpt1mc;
+
     const int DIVIDE_LINE = 1000;
 	const float INTERVAL = 5.0;
 	const float TRACK_WIDTH = 2;
+	const QString TRAIN_PATH = "mod/train.obj";
 };  
 
 #endif // TRAINVIEW_H  

@@ -10,8 +10,14 @@ TrainView::~TrainView()
 void TrainView::initializeGL()
 {
 	initializeOpenGLFunctions();
-	m = new Model(QString("mod/train.obj"), 25, Point3d());
-	m->setOffset(Point3d(-0.5,90,0));
+	m = new Model(TRAIN_PATH, 25, Point3d());
+	m->setOffset(Point3d(0,90,0));
+
+	this->cars.push_back(new Model(TRAIN_PATH, 25, Point3d()));
+	this->cars.push_back(new Model(TRAIN_PATH, 25, Point3d()));
+
+
+
     this->particle = new ParticleSystem;
     loadTexture2D("cloud3.png", this->particle->textureID);
 }
@@ -238,17 +244,10 @@ void TrainView::drawTrack(bool doingShadows) {
             this->m_pTrack->points[(i + 1) % this->m_pTrack->points.size()].orient,
             this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].orient // for G
         };
-
-		
-
         float percent = 1.0f / DIVIDE_LINE;
         float t = 0;
 
 		float partialLen = 0,intervalCount = 0;
-
-		
-
-		
         Pnt3f qt, orient;
         for (size_t j = 0; j < DIVIDE_LINE; j++) {
             t += percent;
@@ -266,17 +265,71 @@ void TrainView::drawTrack(bool doingShadows) {
             Pnt3f cross = (qt1 - qt0) * orient;
             cross.normalize();
             cross = cross * 2.5f;
+
             // Draw.
-			if (j == 0)continue;
+			if (j == 0) { 
+				lpt1pc = qt1 + cross;
+				lpt1mc = qt1 - cross;
+				continue;
+			}
 			else if (j == 1) {
-				// support construction
-				glBegin(GL_POLYGON);
-				cross = cross * 1.4f;
-				glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
-				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
-				glVertex3f(qt0.x + cross.x, 0, qt0.z + cross.z);
-				glVertex3f(qt0.x - cross.x, 0, qt0.z - cross.z);
+				// supporting struction
+				Pnt3f tmp = cross * 2;
+				Pnt3f vqt = (5.0 / dist) * (qt0 - qt1);
+				glBegin(GL_QUADS);
+
+				glColor3ub(0x66, 0xCC, 0xFF);
+				glVertex3f(qt0.x - tmp.x, qt0.y - tmp.y-1, qt0.z - tmp.z);
+				glVertex3f(qt0.x + tmp.x, qt0.y + tmp.y-1, qt0.z + tmp.z);
+				glVertex3f(qt0.x + tmp.x + vqt.x, qt0.y + tmp.y + vqt.y-1, qt0.z + tmp.z + vqt.z);
+				glVertex3f(qt0.x - tmp.x + vqt.x, qt0.y - tmp.y + vqt.y-1, qt0.z - tmp.z + vqt.z);
+
+				glVertex3f(qt0.x - tmp.x, qt0.y - tmp.y, qt0.z - tmp.z);
+				glVertex3f(qt0.x - tmp.x + vqt.x, qt0.y - tmp.y + vqt.y, qt0.z - tmp.z + vqt.z);
+				glVertex3f(qt0.x - tmp.x + vqt.x, 0, qt0.z - tmp.z + vqt.z);
+				glVertex3f(qt0.x - tmp.x, 0, qt0.z - tmp.z);
+
+				glVertex3f(qt0.x + tmp.x + vqt.x, qt0.y + tmp.y + vqt.y, qt0.z + tmp.z + vqt.z);
+				glVertex3f(qt0.x + tmp.x, qt0.y + tmp.y, qt0.z + tmp.z);
+				glVertex3f(qt0.x + tmp.x, 0, qt0.z + tmp.z);
+				glVertex3f(qt0.x + tmp.x + vqt.x,0, qt0.z + tmp.z + vqt.z);
+				tmp = cross;
+
+				glVertex3f(qt0.x - tmp.x, qt0.y - tmp.y, qt0.z - tmp.z);
+				glVertex3f(qt0.x - tmp.x + vqt.x, qt0.y - tmp.y + vqt.y, qt0.z - tmp.z + vqt.z);
+				glVertex3f(qt0.x - tmp.x + vqt.x, 0, qt0.z - tmp.z + vqt.z);
+				glVertex3f(qt0.x - tmp.x, 0, qt0.z - tmp.z);
+
+				glVertex3f(qt0.x + tmp.x + vqt.x, qt0.y + tmp.y + vqt.y, qt0.z + tmp.z + vqt.z);
+				glVertex3f(qt0.x + tmp.x, qt0.y + tmp.y, qt0.z + tmp.z);
+				glVertex3f(qt0.x + tmp.x, 0, qt0.z + tmp.z);
+				glVertex3f(qt0.x + tmp.x + vqt.x, 0, qt0.z + tmp.z + vqt.z);
+
+				glVertex3f(qt0.x - tmp.x, qt0.y - tmp.y, qt0.z - tmp.z);
+				glVertex3f(qt0.x - tmp.x*2, qt0.y - tmp.y*2, qt0.z - tmp.z*2);
+				glVertex3f(qt0.x - tmp.x * 2, 0, qt0.z - tmp.z * 2);
+				glVertex3f(qt0.x - tmp.x,0, qt0.z - tmp.z);
+
+				glVertex3f(qt0.x - tmp.x + vqt.x, qt0.y - tmp.y + vqt.y, qt0.z - tmp.z + vqt.z);
+				glVertex3f(qt0.x - tmp.x*2 + vqt.x, qt0.y - tmp.y*2 + vqt.y, qt0.z - tmp.z*2 + vqt.z);
+				glVertex3f(qt0.x - tmp.x * 2 + vqt.x, 0, qt0.z - tmp.z * 2 + vqt.z);
+				glVertex3f(qt0.x - tmp.x + vqt.x, 0, qt0.z - tmp.z + vqt.z);
+
+				glVertex3f(qt0.x + tmp.x + vqt.x, qt0.y + tmp.y + vqt.y, qt0.z + tmp.z + vqt.z);
+				glVertex3f(qt0.x + tmp.x * 2 + vqt.x, qt0.y + tmp.y * 2 + vqt.y, qt0.z + tmp.z * 2 + vqt.z);
+				glVertex3f(qt0.x + tmp.x * 2 + vqt.x, 0, qt0.z + tmp.z * 2 + vqt.z);
+				glVertex3f(qt0.x + tmp.x + vqt.x, 0, qt0.z + tmp.z + vqt.z);
+
+				glVertex3f(qt0.x + tmp.x, qt0.y + tmp.y, qt0.z + tmp.z);
+				glVertex3f(qt0.x + tmp.x * 2, qt0.y + tmp.y * 2, qt0.z + tmp.z * 2);
+				glVertex3f(qt0.x + tmp.x * 2, 0, qt0.z + tmp.z * 2);
+				glVertex3f(qt0.x + tmp.x, 0, qt0.z + tmp.z);
+
+				glColor3ub(60, 60, 60);
 				glEnd();
+				lpt1pc = qt1 + cross;
+				lpt1mc = qt1 - cross;
+				continue;
 				//
 			}
             glLineWidth(5);
@@ -285,15 +338,21 @@ void TrainView::drawTrack(bool doingShadows) {
                 // Spline color.
                 glColor3ub(66, 22, 0);
             }
+
+			glVertex3f(lpt1pc.x, lpt1pc.y, lpt1pc.z);
+			glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
+			
+			glVertex3f(lpt1mc.x, lpt1mc.y, lpt1mc.z);
+			glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
+
             glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
             glVertex3f(qt1.x + cross.x, qt1.y + cross.y, qt1.z + cross.z);
 
             glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
             glVertex3f(qt1.x - cross.x, qt1.y - cross.y, qt1.z - cross.z);
             glEnd();
-
-			
-			
+			lpt1pc = qt1 + cross;
+			lpt1mc = qt1 - cross;
 			//
 			if (this->track == 1 && intervalCount > INTERVAL) {
                 if (!doingShadows) {
@@ -355,6 +414,7 @@ void TrainView::calcTrain(Pnt3f& qt, Pnt3f& orient, float t) {
 
     calcPosition(qt, orient, cpPos, cpOrient, t, type_spline);
 }
+
 // Return the next position.
 float TrainView::advanceTrain() {
     float t = this->tPos;
@@ -396,11 +456,36 @@ void TrainView::drawTrain(bool drawingTrain) {
     // Cross get Y.(cuz orient is not real Y.)
     this->trainBasisY = this->trainBasisX * this->trainBasisZ;
     this->trainBasisY.normalize();
+
+	/*// do the things above to cars
+	vector<Pnt3f> carQT(cars.size());
+	vector<Pnt3f> carOrient(cars.size());
+	vector<Pnt3f> carTBX(cars.size());
+	vector<Pnt3f> carTBY(cars.size());
+	vector<Pnt3f> carTBZ(cars.size());
+	float intervalT = 0.3;
+	for (int i = 0; i < this->cars.size(); ++i) {
+		float posi = this->tPos - (i + 1)*intervalT;
+		while (posi < 0)posi += 1;
+		calcTrain(carQT[i], carOrient[i], posi);
+		// Update cureent train coordinate.
+		carTBY[i] = carQT[i];
+		carTBY[i].normalize();
+		//[todo]
+		// Update train direction.
+		// Cross get X.
+		// Cross get Y.(cuz orient is not real Y.)
+	}
+
+
+
+	//
+	*/
+
     // Draw.
     if (drawingTrain) {
 		glColor3ub(60, 60, 60);
 		glBegin(GL_LINES);
-
 		Pnt3f xx, yy, zz;
 		xx = this->trainBasisX * 20;
 		xx = xx + qt;
