@@ -21,6 +21,7 @@ public:
 	void setPosi(Point3d);
 	void setScale(int);
 	void update();
+	void setOffset(Point3d);
 
     void set_base(Pnt3f x, Pnt3f y, Pnt3f z);
     QString fileName() const { return m_fileName; }
@@ -40,6 +41,7 @@ private:
     QVector<Point3d> n_normals;
 	int scale;
 	Point3d posi;
+	Point3d offset;
 	Pnt3f bx, by, bz;
 };
 

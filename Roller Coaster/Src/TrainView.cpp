@@ -10,6 +10,7 @@ TrainView::~TrainView()
 void TrainView::initializeGL()
 {
 	m = new Model(QString("mod/train.obj"), 25, Point3d());
+	m->setOffset(Point3d(-0.5,90,0));
     this->particle = new ParticleSystem;
 	initializeOpenGLFunctions();
 }
@@ -242,15 +243,15 @@ void TrainView::drawTrack(bool doingShadows) {
             this->m_pTrack->points[(i + 2) % this->m_pTrack->points.size()].orient // for G
         };
 
-		// support construction
-
-
-		//
+		
 
         float percent = 1.0f / DIVIDE_LINE;
         float t = 0;
 
 		float partialLen = 0,intervalCount = 0;
+
+		
+
 		
         Pnt3f qt, orient;
         for (size_t j = 0; j < DIVIDE_LINE; j++) {
@@ -271,6 +272,17 @@ void TrainView::drawTrack(bool doingShadows) {
             cross = cross * 2.5f;
             // Draw.
 			if (j == 0)continue;
+			else if (j == 1) {
+				// support construction
+				glBegin(GL_POLYGON);
+				cross = cross * 1.4f;
+				glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
+				glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
+				glVertex3f(qt0.x + cross.x, 0, qt0.z + cross.z);
+				glVertex3f(qt0.x - cross.x, 0, qt0.z - cross.z);
+				glEnd();
+				//
+			}
             glLineWidth(5);
             glBegin(GL_LINES);
             if (!doingShadows) {
@@ -283,6 +295,10 @@ void TrainView::drawTrack(bool doingShadows) {
             glVertex3f(qt0.x - cross.x, qt0.y - cross.y, qt0.z - cross.z);
             glVertex3f(qt1.x - cross.x, qt1.y - cross.y, qt1.z - cross.z);
             glEnd();
+
+			
+			
+			//
 			if (this->track == 1 && intervalCount > INTERVAL) {
                 if (!doingShadows) {
                     // Track color.
@@ -384,7 +400,7 @@ void TrainView::drawTrain(bool drawingTrain) {
     // Draw.
     if (drawingTrain) {
 		glColor3ub(60, 60, 60);
-		/*glBegin(GL_LINES);
+		glBegin(GL_LINES);
 
 		Pnt3f xx, yy, zz;
 		xx = this->trainBasisX * 20;
@@ -402,9 +418,9 @@ void TrainView::drawTrain(bool drawingTrain) {
 		glColor3ub(240, 240, 240);
 		glVertex3f(qt.x, qt.y, qt.z);
 		glVertex3f(zz.x, zz.y, zz.z);
-		glEnd();*/
-		m->set_base(this->trainBasisX, this->trainBasisY, -1*this->trainBasisZ);
-		m->setPosi(Point3d(qt.x, qt.y + 90, qt.z));
+		glEnd();
+		m->set_base(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
+		m->setPosi(Point3d(qt.x, qt.y, qt.z));
 		glColor3ub(60, 60, 60);
 		m->draw();
     }
