@@ -93,7 +93,7 @@ public:
 
     float verticalDir, horizontalDir;
 
-    const int DIVIDE_LINE = 100;
+    const int DIVIDE_LINE = 1000;
 	const float INTERVAL = 5.0;
 	const float TRACK_WIDTH = 2;
 };  
