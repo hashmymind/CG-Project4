@@ -138,6 +138,11 @@ void Model::draw() {
         glDisable(GL_LIGHT0);
         glDisable(GL_LIGHTING);
 	*/
+     // Wireframe
+     glColor3f(0.6f, 0.6f, 0.6f);
+     glVertexPointer(3, GL_FLOAT, 0, (float *) n_points.data());
+     glDrawElements(GL_LINES, m_edgeIndices.size(), GL_UNSIGNED_INT, m_edgeIndices.data());
+
     glDisableClientState(GL_VERTEX_ARRAY);
     //glDisable(GL_DEPTH_TEST);
 }

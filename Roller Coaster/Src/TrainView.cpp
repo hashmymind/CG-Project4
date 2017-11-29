@@ -162,11 +162,6 @@ setProjection()
 		glRotatef(-90,1,0,0);
 		update();
 	} 
-	// Or do the train view or other view here
-	//####################################################################
-	// TODO: 
-	// put code for train view projection here!	
-	//####################################################################
 	else {
 		trainCamView(aspect);
 		update();
@@ -205,7 +200,7 @@ void TrainView::drawStuff(bool doingShadows)
 	// draw the track
 	drawTrack(doingShadows);
     // draw train.
-	drawTrain(this->camera != 2);// don't draw the train if you're looking out the front window
+	drawTrain(true);// don't draw the train if you're looking out the front window
 }
 void TrainView::calcPosition(Pnt3f& qt, Pnt3f& orient, Pnt3f cpPos[4], Pnt3f cpOrient[4], float t, spline_t& type_spline) {
     switch (type_spline) {
@@ -382,9 +377,12 @@ void TrainView::drawTrain(bool drawingTrain) {
     // Cross get X.
     this->trainBasisX = this->trainBasisZ * this->trainBasisY;
     this->trainBasisX.normalize();
+    // Cross get Y.(cuz orient is not real Y.)
+    this->trainBasisY = this->trainBasisX * this->trainBasisZ;
+    this->trainBasisY.normalize();
     // Draw.
     if (drawingTrain) {
-		/*glColor3ub(60, 60, 60);
+		glColor3ub(60, 60, 60);
 		glBegin(GL_LINES);
 
 		Pnt3f xx, yy, zz;
@@ -403,8 +401,8 @@ void TrainView::drawTrain(bool drawingTrain) {
 		glColor3ub(240, 240, 240);
 		glVertex3f(qt.x, qt.y, qt.z);
 		glVertex3f(zz.x, zz.y, zz.z);
-		glEnd();*/
-		m->set_base(this->trainBasisX, this->trainBasisY, -1*this->trainBasisZ);
+		glEnd();
+		m->set_base(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
 		m->setPosi(Point3d(qt.x, qt.y + 90, qt.z));
 		glColor3ub(60, 60, 60);
 		m->draw();
@@ -519,7 +517,7 @@ void TrainView::trainCamView(float aspect) {
     // ©T©w¦ì²¾
     Pnt3f offset;
     const float OFFSET_X = 0.0f;
-    const float OFFSET_Y = 2.0f;
+    const float OFFSET_Y = 10.0f;
     const float OFFSET_Z = 0.0f;
     offset = trainBasisX * OFFSET_X + this->trainBasisY * OFFSET_Y + this->trainBasisZ * OFFSET_Z;
 
