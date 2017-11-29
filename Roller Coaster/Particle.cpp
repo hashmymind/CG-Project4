@@ -2,177 +2,10 @@
 #include "Particle.h"
 #define MAX_PARTICLES 1000  
 #define MAX_FIRES 5  
-
 ParticleSystem::ParticleSystem() {
     this->nOfFires = 0;
     this->Tick1 = this->Tick2 = GetTickCount();
     this->DTick = 0;
-}
-
-void ParticleSystem::Explosion1(const Particle& par) {
-    Particle ep;
-    for (int i = 0; i<100; i++) {
-        ep.b = float(rand() % 100) / 60.0f;
-        ep.g = float(rand() % 100) / 60.0f;
-        ep.r = float(rand() % 100) / 60.0f;
-        ep.life = 1.0f;
-        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
-        ep.size = 0.8f;
-        ep.xpos = par.xpos;
-        ep.ypos = par.ypos;
-        ep.zpos = par.zpos;
-        ep.xspeed = 0.02f - float(rand() % 41) / 1000.0f;
-        ep.yspeed = 0.02f - float(rand() % 41) / 1000.0f;
-        ep.zspeed = 0.02f - float(rand() % 41) / 1000.0f;
-        ep.bFire = 0;
-        ep.nExpl = 0;
-        ep.bAddParts = 0;
-        ep.AddCount = 0.0f;
-        ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
-    }
-}
-void ParticleSystem::Explosion2(const Particle& par) {
-    Particle ep;
-    for (int i = 0; i<1000; i++) {
-        ep.b = par.b;
-        ep.g = par.g;
-        ep.r = par.r;
-        ep.life = 1.0f;
-        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
-        ep.size = 0.8f;
-        ep.xpos = par.xpos;
-        ep.ypos = par.ypos;
-        ep.zpos = par.zpos;
-        ep.xspeed = 0.02f - float(rand() % 41) / 1000.0f;
-        ep.yspeed = 0.02f - float(rand() % 41) / 1000.0f;
-        ep.zspeed = 0.02f - float(rand() % 41) / 1000.0f;
-        ep.bFire = 0;
-        ep.nExpl = 0;
-        ep.bAddParts = 0;
-        ep.AddCount = 0.0f;
-        ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
-    }
-}
-void ParticleSystem::Explosion3(const Particle& par) {
-    Particle ep;
-    float PIAsp = 3.1415926 / 180;
-    for (int i = 0; i<30; i++) {
-        float angle = float(rand() % 360)*PIAsp;
-        ep.b = par.b;
-        ep.g = par.g;
-        ep.r = par.r;
-        ep.life = 1.5f;
-        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
-        ep.size = 0.8f;
-        ep.xpos = par.xpos;
-        ep.ypos = par.ypos;
-        ep.zpos = par.zpos;
-        ep.xspeed = (float) sin(angle)*0.01f;
-        ep.yspeed = 0.01f + float(rand() % 11) / 1000.0f;
-        ep.zspeed = (float) cos(angle)*0.01f;
-        ep.bFire = 0;
-        ep.nExpl = 0;
-        ep.bAddParts = 1;
-        ep.AddCount = 0.0f;
-        ep.AddSpeed = 0.2f;
-        Particles.push_back(ep);
-    }
-}
-void ParticleSystem::Explosion4(const Particle& par) {
-    Particle ep;
-    float PIAsp = 3.1415926 / 180;
-    for (int i = 0; i<30; i++) {
-        float angle = float(rand() % 360)*PIAsp;
-        ep.b = float(rand() % 100) / 60.0f;
-        ep.g = float(rand() % 100) / 60.0f;
-        ep.r = float(rand() % 100) / 60.0f;
-        ep.life = 1.5f;
-        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
-        ep.size = 0.8f;
-        ep.xpos = par.xpos;
-        ep.ypos = par.ypos;
-        ep.zpos = par.zpos;
-        ep.xspeed = (float) sin(angle)*0.01f;
-        ep.yspeed = 0.01f + float(rand() % 11) / 1000.0f;
-        ep.zspeed = (float) cos(angle)*0.01f;
-        ep.bFire = 0;
-        ep.nExpl = 0;
-        ep.bAddParts = 1;
-        ep.AddCount = 0.0f;
-        ep.AddSpeed = 0.2f;
-        Particles.push_back(ep);
-    }
-}
-void ParticleSystem::Explosion5(const Particle& par) {
-    Particle ep;
-    for (int i = 0; i<30; i++) {
-        ep.b = par.b;
-        ep.g = par.g;
-        ep.r = par.r;
-        ep.life = 0.8f;
-        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
-        ep.size = 0.8f;
-        ep.xpos = par.xpos;
-        ep.ypos = par.ypos;
-        ep.zpos = par.zpos;
-        ep.xspeed = 0.01f - float(rand() % 21) / 1000.0f;
-        ep.yspeed = 0.01f - float(rand() % 21) / 1000.0f;
-        ep.zspeed = 0.01f - float(rand() % 21) / 1000.0f;
-        ep.bFire = 0;
-        ep.nExpl = 7;
-        ep.bAddParts = 0;
-        ep.AddCount = 0.0f;
-        ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
-    }
-}
-void ParticleSystem::Explosion6(const Particle& par) {
-    Particle ep;
-    for (int i = 0; i<100; i++) {
-        ep.b = float(rand() % 100) / 60.0f;
-        ep.g = float(rand() % 100) / 60.0f;
-        ep.r = float(rand() % 100) / 60.0f;
-        ep.life = 0.8f;
-        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
-        ep.size = 0.8f;
-        ep.xpos = par.xpos;
-        ep.ypos = par.ypos;
-        ep.zpos = par.zpos;
-        ep.xspeed = 0.01f - float(rand() % 21) / 1000.0f;
-        ep.yspeed = 0.01f - float(rand() % 21) / 1000.0f;
-        ep.zspeed = 0.01f - float(rand() % 21) / 1000.0f;
-        ep.bFire = 0;
-        ep.nExpl = 7;
-        ep.bAddParts = 0;
-        ep.AddCount = 0.0f;
-        ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
-    }
-}
-void ParticleSystem::Explosion7(const Particle& par) {
-    Particle ep;
-    for (int i = 0; i<10; i++) {
-        ep.b = par.b;
-        ep.g = par.g;
-        ep.r = par.r;
-        ep.life = 0.5f;
-        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
-        ep.size = 0.6f;
-        ep.xpos = par.xpos;
-        ep.ypos = par.ypos;
-        ep.zpos = par.zpos;
-        ep.xspeed = 0.02f - float(rand() % 41) / 1000.0f;
-        ep.yspeed = 0.02f - float(rand() % 41) / 1000.0f;
-        ep.zspeed = 0.02f - float(rand() % 41) / 1000.0f;
-        ep.bFire = 0;
-        ep.nExpl = 0;
-        ep.bAddParts = 0;
-        ep.AddCount = 0.0f;
-        ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
-    }
 }
 void ParticleSystem::ProcessParticles() {
     Tick1 = Tick2;
@@ -243,10 +76,20 @@ void ParticleSystem::ProcessParticles() {
     }
 }
 void ParticleSystem::DrawParticles() {
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
     //glTranslatef(0, 0, -60);
     for (auto& par : Particles) {
+        glPushMatrix();
         glColor4f(par.r, par.g, par.b, par.life);
+        // Rotate.
+        glRotatef(par.rotX, par.xpos + 1, par.ypos, par.zpos);
+        glRotatef(par.rotY, par.xpos, par.ypos + 1, par.zpos);
+        glRotatef(par.rotZ, par.xpos, par.ypos, par.zpos + 1);
+
         glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2d(1, 1);
         glVertex3f(par.xpos + par.size, par.ypos + par.size, par.zpos);
@@ -257,7 +100,10 @@ void ParticleSystem::DrawParticles() {
         glTexCoord2d(0, 0);
         glVertex3f(par.xpos - par.size, par.ypos - par.size, par.zpos);
         glEnd();
+        glPopMatrix();
     }
+    glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
 }
 void ParticleSystem::InitParticle(Particle& ep) {
     ep.b = float(rand() % 100) / 60.0f;//顏色隨機
@@ -269,6 +115,9 @@ void ParticleSystem::InitParticle(Particle& ep) {
     ep.xpos = 30.0f - float(rand() % 601) / 10.0f;//位置 
     ep.ypos = 0.0f;
     ep.zpos = 20.0f - float(rand() % 401) / 10.0f;
+    ep.rotX = float(rand() % 360);
+    ep.rotY = float(rand() % 360);
+    ep.rotZ = float(rand() % 360);
     if (!int(ep.xpos))//x方向速度(z方向相同)
     {
         ep.xspeed = 0.0f;
@@ -287,4 +136,192 @@ void ParticleSystem::InitParticle(Particle& ep) {
     ep.AddSpeed = 0.2f;
     nOfFires++;//粒子數+1 
     Particles.push_back(ep);//加入粒子列表
+}
+
+
+void ParticleSystem::Explosion1(const Particle& par) {
+    Particle ep;
+    for (int i = 0; i < 100; i++) {
+        ep.b = float(rand() % 100) / 60.0f;
+        ep.g = float(rand() % 100) / 60.0f;
+        ep.r = float(rand() % 100) / 60.0f;
+        ep.life = 1.0f;
+        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
+        ep.size = 0.8f;
+        ep.xpos = par.xpos;
+        ep.ypos = par.ypos;
+        ep.zpos = par.zpos;
+        ep.rotX = float(rand() % 360);
+        ep.rotY = float(rand() % 360);
+        ep.rotZ = float(rand() % 360);
+        ep.xspeed = 0.02f - float(rand() % 41) / 1000.0f;
+        ep.yspeed = 0.02f - float(rand() % 41) / 1000.0f;
+        ep.zspeed = 0.02f - float(rand() % 41) / 1000.0f;
+        ep.bFire = 0;
+        ep.nExpl = 0;
+        ep.bAddParts = 0;
+        ep.AddCount = 0.0f;
+        ep.AddSpeed = 0.0f;
+        Particles.push_back(ep);
+    }
+}
+void ParticleSystem::Explosion2(const Particle& par) {
+    Particle ep;
+    for (int i = 0; i < 1000; i++) {
+        ep.b = par.b;
+        ep.g = par.g;
+        ep.r = par.r;
+        ep.life = 1.0f;
+        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
+        ep.size = 0.8f;
+        ep.xpos = par.xpos;
+        ep.ypos = par.ypos;
+        ep.zpos = par.zpos;
+        ep.rotX = float(rand() % 360);
+        ep.rotY = float(rand() % 360);
+        ep.rotZ = float(rand() % 360);
+        ep.xspeed = 0.02f - float(rand() % 41) / 1000.0f;
+        ep.yspeed = 0.02f - float(rand() % 41) / 1000.0f;
+        ep.zspeed = 0.02f - float(rand() % 41) / 1000.0f;
+        ep.bFire = 0;
+        ep.nExpl = 0;
+        ep.bAddParts = 0;
+        ep.AddCount = 0.0f;
+        ep.AddSpeed = 0.0f;
+        Particles.push_back(ep);
+    }
+}
+void ParticleSystem::Explosion3(const Particle& par) {
+    Particle ep;
+    float PIAsp = 3.1415926 / 180;
+    for (int i = 0; i < 30; i++) {
+        float angle = float(rand() % 360)*PIAsp;
+        ep.b = par.b;
+        ep.g = par.g;
+        ep.r = par.r;
+        ep.life = 1.5f;
+        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
+        ep.size = 0.8f;
+        ep.xpos = par.xpos;
+        ep.ypos = par.ypos;
+        ep.zpos = par.zpos;
+        ep.rotX = float(rand() % 360);
+        ep.rotY = float(rand() % 360);
+        ep.rotZ = float(rand() % 360);
+        ep.xspeed = (float) sin(angle)*0.01f;
+        ep.yspeed = 0.01f + float(rand() % 11) / 1000.0f;
+        ep.zspeed = (float) cos(angle)*0.01f;
+        ep.bFire = 0;
+        ep.nExpl = 0;
+        ep.bAddParts = 1;
+        ep.AddCount = 0.0f;
+        ep.AddSpeed = 0.2f;
+        Particles.push_back(ep);
+    }
+}
+void ParticleSystem::Explosion4(const Particle& par) {
+    Particle ep;
+    float PIAsp = 3.1415926 / 180;
+    for (int i = 0; i < 30; i++) {
+        float angle = float(rand() % 360)*PIAsp;
+        ep.b = float(rand() % 100) / 60.0f;
+        ep.g = float(rand() % 100) / 60.0f;
+        ep.r = float(rand() % 100) / 60.0f;
+        ep.life = 1.5f;
+        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
+        ep.size = 0.8f;
+        ep.xpos = par.xpos;
+        ep.ypos = par.ypos;
+        ep.zpos = par.zpos;
+        ep.rotX = float(rand() % 360);
+        ep.rotY = float(rand() % 360);
+        ep.rotZ = float(rand() % 360);
+        ep.xspeed = (float) sin(angle)*0.01f;
+        ep.yspeed = 0.01f + float(rand() % 11) / 1000.0f;
+        ep.zspeed = (float) cos(angle)*0.01f;
+        ep.bFire = 0;
+        ep.nExpl = 0;
+        ep.bAddParts = 1;
+        ep.AddCount = 0.0f;
+        ep.AddSpeed = 0.2f;
+        Particles.push_back(ep);
+    }
+}
+void ParticleSystem::Explosion5(const Particle& par) {
+    Particle ep;
+    for (int i = 0; i < 30; i++) {
+        ep.b = par.b;
+        ep.g = par.g;
+        ep.r = par.r;
+        ep.life = 0.8f;
+        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
+        ep.size = 0.8f;
+        ep.xpos = par.xpos;
+        ep.ypos = par.ypos;
+        ep.zpos = par.zpos;
+        ep.rotX = float(rand() % 360);
+        ep.rotY = float(rand() % 360);
+        ep.rotZ = float(rand() % 360);
+        ep.xspeed = 0.01f - float(rand() % 21) / 1000.0f;
+        ep.yspeed = 0.01f - float(rand() % 21) / 1000.0f;
+        ep.zspeed = 0.01f - float(rand() % 21) / 1000.0f;
+        ep.bFire = 0;
+        ep.nExpl = 7;
+        ep.bAddParts = 0;
+        ep.AddCount = 0.0f;
+        ep.AddSpeed = 0.0f;
+        Particles.push_back(ep);
+    }
+}
+void ParticleSystem::Explosion6(const Particle& par) {
+    Particle ep;
+    for (int i = 0; i < 100; i++) {
+        ep.b = float(rand() % 100) / 60.0f;
+        ep.g = float(rand() % 100) / 60.0f;
+        ep.r = float(rand() % 100) / 60.0f;
+        ep.life = 0.8f;
+        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
+        ep.size = 0.8f;
+        ep.xpos = par.xpos;
+        ep.ypos = par.ypos;
+        ep.zpos = par.zpos;
+        ep.rotX = float(rand() % 360);
+        ep.rotY = float(rand() % 360);
+        ep.rotZ = float(rand() % 360);
+        ep.xspeed = 0.01f - float(rand() % 21) / 1000.0f;
+        ep.yspeed = 0.01f - float(rand() % 21) / 1000.0f;
+        ep.zspeed = 0.01f - float(rand() % 21) / 1000.0f;
+        ep.bFire = 0;
+        ep.nExpl = 7;
+        ep.bAddParts = 0;
+        ep.AddCount = 0.0f;
+        ep.AddSpeed = 0.0f;
+        Particles.push_back(ep);
+    }
+}
+void ParticleSystem::Explosion7(const Particle& par) {
+    Particle ep;
+    for (int i = 0; i < 10; i++) {
+        ep.b = par.b;
+        ep.g = par.g;
+        ep.r = par.r;
+        ep.life = 0.5f;
+        ep.fade = 0.01f + float(rand() % 31) / 10000.0f;
+        ep.size = 0.6f;
+        ep.xpos = par.xpos;
+        ep.ypos = par.ypos;
+        ep.zpos = par.zpos;
+        ep.rotX = float(rand() % 360);
+        ep.rotY = float(rand() % 360);
+        ep.rotZ = float(rand() % 360);
+        ep.xspeed = 0.02f - float(rand() % 41) / 1000.0f;
+        ep.yspeed = 0.02f - float(rand() % 41) / 1000.0f;
+        ep.zspeed = 0.02f - float(rand() % 41) / 1000.0f;
+        ep.bFire = 0;
+        ep.nExpl = 0;
+        ep.bAddParts = 0;
+        ep.AddCount = 0.0f;
+        ep.AddSpeed = 0.0f;
+        Particles.push_back(ep);
+    }
 }

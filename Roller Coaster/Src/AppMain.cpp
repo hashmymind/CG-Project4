@@ -27,13 +27,14 @@ AppMain::AppMain(QWidget *parent)
     this->trainview->tPos = 0;
     this->trainview->verticalDir = 0;
     this->trainview->horizontalDir = 0;
-    this->trainview->velocity = this->trainview->oriVelocity = (this->trainview->minVelocity + this->trainview->maxVelocity) / 2;
+    ChangeSpeedOfTrain(49); // Initial velocity.
+    //this->trainview->velocity = this->trainview->oriVelocity = this->trainview->minVelocity * powf(powf((this->trainview->maxVelocity / this->trainview->minVelocity), 1.0f / 19.0f), 9.0f);
     this->lockCursor = false;
     this->mOffsetX = 0;
     this->mOffsetY = 0;
     this->mouseX = 0;
     this->mouseY = 0;
-
+    srand(time(NULL));
     // Timer.
     timer = new QTimer(this);
     this->timer->start(20);
@@ -349,7 +350,8 @@ void AppMain::SwitchPlayAndPause()
 void AppMain::ChangeSpeedOfTrain( int val )
 {
     // val in 0 ~ 99
-    this->trainview->oriVelocity = this->trainview->minVelocity + (this->trainview->maxVelocity - this->trainview->minVelocity) * ((float) val / 100.0f);
+    // 等比調整
+    this->trainview->oriVelocity = this->trainview->minVelocity * powf(powf((this->trainview->maxVelocity / this->trainview->minVelocity), 1.0f / 19.0f), ((float) val / 5.0f));
     this->trainview->velocity = this->trainview->oriVelocity;
 }
 
@@ -535,13 +537,12 @@ void AppMain::TrainRun() {
     }
 }
 
-
 void AppMain::UpdateMouse() {
     static bool last;
     auto p = this->mapFromGlobal(this->cursor().pos());
     mOffsetX = p.x() - mouseX;
     mOffsetY = p.y() - mouseY;
-    if (this->isActiveWindow() && lockCursor) {
+    if (this->isActiveWindow() && lockCursor && this->trainview->camera == 2) {
         if (!last) { ShowCursor(false); }
         last = true;
         SetCursorPos(this->pos().x() + this->size().width() / 2, this->pos().y() + this->size().height() / 2);

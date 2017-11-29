@@ -73,6 +73,8 @@ private:
     void drawTrain(bool drawingTrain);
     void trainCamView(float);
 
+    void loadTexture2D(QString str, GLuint &textureID);
+
 public:
 	ArcBallCam		arcball;			// keep an ArcBall for the UI
 	int				selectedCube;  // simple - just remember which cube is selected
@@ -89,7 +91,7 @@ public:
     const float minimumVelocityRate = 0.4f; // 受重力影響後火車運行的最低速度比率
     // Min & Max(for slider control.)
     const float minVelocity = 0.1f;
-    const float maxVelocity = 10.0f;
+    const float maxVelocity = 25.0f;
 
     float tPos; // 0 ~ 1 代表在整個軌道迴圈的位置
 	vector<float> arclen; // use after drawTrack was called
@@ -100,7 +102,7 @@ public:
 
     ParticleSystem* particle;
 
-    const int DIVIDE_LINE = 100;
+    const int DIVIDE_LINE = 1000;
 	const float INTERVAL = 5.0;
 	const float TRACK_WIDTH = 2;
 };  

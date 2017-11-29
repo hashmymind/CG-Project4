@@ -9,9 +9,10 @@ TrainView::~TrainView()
 {}  
 void TrainView::initializeGL()
 {
+	initializeOpenGLFunctions();
 	m = new Model(QString("mod/train.obj"), 18, Point3d());
     this->particle = new ParticleSystem;
-	initializeOpenGLFunctions();
+    loadTexture2D("F:\\GitProject\\CG-Project3\\Roller Coaster\\cloud3.png", this->particle->textureID);
 }
 void TrainView:: resetArcball()
 	//========================================================================
@@ -378,8 +379,8 @@ void TrainView::drawTrain(bool drawingTrain) {
     this->trainBasisX.normalize();
     // Draw.
     if (drawingTrain) {
-		glColor3ub(60, 60, 60);
-		/*glBegin(GL_LINES);
+		/*glColor3ub(60, 60, 60);
+		glBegin(GL_LINES);
 
 		Pnt3f xx, yy, zz;
 		xx = this->trainBasisX * 20;
@@ -510,9 +511,6 @@ void TrainView::trainCamView(float aspect) {
     direction.x = v.x();
     direction.y = v.y();
     direction.z = v.z();
-    v = QVector3D(this->trainBasisY.x, this->trainBasisY.y, this->trainBasisY.z);
-    v = rotateMatrix * v;
-    Pnt3f up(v.x(), v.y(), v.z());
     // ©T©w¦ì²¾
     Pnt3f offset;
     const float OFFSET_X = 0.0f;
@@ -522,6 +520,25 @@ void TrainView::trainCamView(float aspect) {
 
     Pnt3f pos = this->trainPos + offset;
     Pnt3f center = this->trainPos + offset + direction;
+    v = QVector3D(this->trainBasisY.x, this->trainBasisY.y, this->trainBasisY.z);
+    v = rotateMatrix * v;
+    Pnt3f up(v.x(), v.y(), v.z());
     //Pnt3f up = this->trainBasisY + direction;
     gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, up.x, up.y, up.z);
+}
+
+void TrainView::loadTexture2D(QString str, GLuint &textureID) {
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+
+
+    QImage img(str);
+    QImage opengl_grass = QGLWidget::convertToGLFormat(img);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, opengl_grass.width(), opengl_grass.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, opengl_grass.bits());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glDisable(GL_TEXTURE_2D);
 }
