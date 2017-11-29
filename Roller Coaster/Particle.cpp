@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include "Particle.h"
-#define MAX_PARTICLES 1000  
-#define MAX_FIRES 5  
 ParticleSystem::ParticleSystem() {
     this->nOfFires = 0;
     this->Tick1 = this->Tick2 = GetTickCount();
     this->DTick = 0;
+    this->MAX_PARTICLES = 10000;
+    this->MAX_FIRES = 100;
 }
 void ParticleSystem::ProcessParticles() {
     Tick1 = Tick2;
@@ -69,7 +69,7 @@ void ParticleSystem::ProcessParticles() {
                     ep.bAddParts = 0;//尾巴粒子没有尾巴  
                     ep.AddCount = 0.0f;
                     ep.AddSpeed = 0.0f;
-                    Particles.push_back(ep);
+                    AddParticle(ep);
                 }
             }
         }
@@ -105,13 +105,18 @@ void ParticleSystem::DrawParticles() {
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
 }
+void ParticleSystem::AddParticle(const Particle & ep) {
+    if (this->Particles.size() < this->MAX_PARTICLES) {
+        this->Particles.push_back(ep);
+    }
+}
 void ParticleSystem::InitParticle(Particle& ep) {
     ep.b = float(rand() % 100) / 60.0f;//顏色隨機
     ep.g = float(rand() % 100) / 60.0f;
     ep.r = float(rand() % 100) / 60.0f;
     ep.life = 1.0f;//初始壽命
     ep.fade = 0.005f + float(rand() % 21) / 10000.0f;//衰减速度
-    ep.size = 1;//大小  
+    ep.size = 2;//大小  
     ep.xpos = 30.0f - float(rand() % 601) / 10.0f;//位置 
     ep.ypos = 0.0f;
     ep.zpos = 20.0f - float(rand() % 401) / 10.0f;
@@ -128,14 +133,14 @@ void ParticleSystem::InitParticle(Particle& ep) {
             ep.xspeed = -(rand() % int(-ep.xpos)) / 1500.0f;
         }
     }
-    ep.yspeed = 0.04f + float(rand() % 11) / 1000.0f;//y方向速度(向上)
+    ep.yspeed = 0.04f + float(rand() % 75) / 1000.0f;//y方向速度(向上)
     ep.bFire = 1;
     ep.nExpl = 1 + rand() % 6;//粒子效果  
     ep.bAddParts = 1;//設定有尾巴 
     ep.AddCount = 0.0f;
     ep.AddSpeed = 0.2f;
     nOfFires++;//粒子數+1 
-    Particles.push_back(ep);//加入粒子列表
+    AddParticle(ep);//加入粒子列表
 }
 
 
@@ -162,7 +167,7 @@ void ParticleSystem::Explosion1(const Particle& par) {
         ep.bAddParts = 0;
         ep.AddCount = 0.0f;
         ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
+        AddParticle(ep);
     }
 }
 void ParticleSystem::Explosion2(const Particle& par) {
@@ -188,7 +193,7 @@ void ParticleSystem::Explosion2(const Particle& par) {
         ep.bAddParts = 0;
         ep.AddCount = 0.0f;
         ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
+        AddParticle(ep);
     }
 }
 void ParticleSystem::Explosion3(const Particle& par) {
@@ -216,7 +221,7 @@ void ParticleSystem::Explosion3(const Particle& par) {
         ep.bAddParts = 1;
         ep.AddCount = 0.0f;
         ep.AddSpeed = 0.2f;
-        Particles.push_back(ep);
+        AddParticle(ep);
     }
 }
 void ParticleSystem::Explosion4(const Particle& par) {
@@ -244,7 +249,7 @@ void ParticleSystem::Explosion4(const Particle& par) {
         ep.bAddParts = 1;
         ep.AddCount = 0.0f;
         ep.AddSpeed = 0.2f;
-        Particles.push_back(ep);
+        AddParticle(ep);
     }
 }
 void ParticleSystem::Explosion5(const Particle& par) {
@@ -270,7 +275,7 @@ void ParticleSystem::Explosion5(const Particle& par) {
         ep.bAddParts = 0;
         ep.AddCount = 0.0f;
         ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
+        AddParticle(ep);
     }
 }
 void ParticleSystem::Explosion6(const Particle& par) {
@@ -296,7 +301,7 @@ void ParticleSystem::Explosion6(const Particle& par) {
         ep.bAddParts = 0;
         ep.AddCount = 0.0f;
         ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
+        AddParticle(ep);
     }
 }
 void ParticleSystem::Explosion7(const Particle& par) {
@@ -322,6 +327,6 @@ void ParticleSystem::Explosion7(const Particle& par) {
         ep.bAddParts = 0;
         ep.AddCount = 0.0f;
         ep.AddSpeed = 0.0f;
-        Particles.push_back(ep);
+        AddParticle(ep);
     }
 }

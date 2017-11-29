@@ -37,13 +37,16 @@ public:
     float DTick;
     const GLfloat grav = 0.00003f;
     GLuint textureID;
+    int MAX_PARTICLES;
+    int MAX_FIRES;
 
     ParticleSystem();
 
-    void InitParticle(Particle& ep);
     void ProcessParticles();
     void DrawParticles();
-
+private:
+    void AddParticle(const Particle& ep);
+    void InitParticle(Particle& ep);
     void Explosion1(const Particle& par);
     void Explosion2(const Particle& par);
     void Explosion3(const Particle& par);

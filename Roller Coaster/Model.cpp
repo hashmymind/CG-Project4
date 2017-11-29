@@ -37,31 +37,31 @@ Model::Model(const QString &filePath, int s, Point3d p)
         } else if (id == "vt") {
 
         } else if (id == "f" || id == "fo") {
-            QVarLengthArray<int, 4> p;
+			QVarLengthArray<int, 4> p;
 
-            while (!ts.atEnd()) {
-                QString vertex;
-                ts >> vertex;
-                const int vertexIndex = vertex.split('/').value(0).toInt();
-                if (vertexIndex)
-                    p.append(vertexIndex > 0 ? vertexIndex - 1 : m_points.size() + vertexIndex);
-            }
+			while (!ts.atEnd()) {
+				QString vertex;
+				ts >> vertex;
+				const int vertexIndex = vertex.split('/').value(0).toInt();
+				if (vertexIndex)
+					p.append(vertexIndex > 0 ? vertexIndex - 1 : m_points.size() + vertexIndex);
+			}
 
-            for (int i = 0; i < p.size(); ++i) {
-                const int edgeA = p[i];
-                const int edgeB = p[(i + 1) % p.size()];
+			for (int i = 0; i < p.size(); ++i) {
+				const int edgeA = p[i];
+				const int edgeB = p[(i + 1) % p.size()];
 
-                if (edgeA < edgeB)
-                    m_edgeIndices << edgeA << edgeB;
-            }
+				if (edgeA < edgeB)
+					m_edgeIndices << edgeA << edgeB;
+			}
 
-            for (int i = 0; i < 3; ++i)
-                m_pointIndices << p[i];
+			for (int i = 0; i < 3; ++i)
+				m_pointIndices << p[i];
 
-            if (p.size() == 4)
-                for (int i = 0; i < 3; ++i)
-                    m_pointIndices << p[(i + 2) % 4];
-        }
+			if (p.size() == 4)
+				for (int i = 0; i < 3; ++i)
+					m_pointIndices << p[(i + 2) % 4];
+		}
     }
 	this->ori_m_points = this->m_points;
 	this->update();
@@ -93,6 +93,7 @@ void Model::update() {
 		n_points.push_back(m_points[i]);
 	}
 
+    m_normals.clear();
 	m_normals.resize(m_points.size());
 	n_normals.clear();
 	for (int i = 0; i < m_pointIndices.size(); i += 3) {
@@ -139,9 +140,9 @@ void Model::draw() {
         glDisable(GL_LIGHTING);
 	*/
      // Wireframe
-     glColor3f(0.6f, 0.6f, 0.6f);
+     /*glColor3f(0.6f, 0.6f, 0.6f);
      glVertexPointer(3, GL_FLOAT, 0, (float *) n_points.data());
-     glDrawElements(GL_LINES, m_edgeIndices.size(), GL_UNSIGNED_INT, m_edgeIndices.data());
+     glDrawElements(GL_LINES, m_edgeIndices.size(), GL_UNSIGNED_INT, m_edgeIndices.data());*/
 
     glDisableClientState(GL_VERTEX_ARRAY);
     //glDisable(GL_DEPTH_TEST);
