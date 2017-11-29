@@ -70,7 +70,7 @@ private:
     void calcPosition(Pnt3f& qt, Pnt3f& orient, Pnt3f cpPos[4], Pnt3f cpOrient[4], float t, spline_t& type_spline);
     void calcTrain(Pnt3f& qt, Pnt3f& orient, float t);
     void drawTrack(bool);
-    void drawTrain(bool drawingTrain);
+    void drawTrain(bool drawingTrain, bool doingShadows);
     void trainCamView(float);
 
     void loadTexture2D(QString str, GLuint &textureID);
