@@ -228,6 +228,7 @@ void TrainView::drawTrack(bool doingShadows) {
 	this->arclen.clear();
 	this->arclen.resize(this->m_pTrack->points.size());
     spline_t type_spline = (spline_t) this->curve;
+	float intervalCount = 0;
     for (size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
         // pos
         Pnt3f cpPos[4] = {
@@ -246,10 +247,9 @@ void TrainView::drawTrack(bool doingShadows) {
         float percent = 1.0f / DIVIDE_LINE;
         float t = 0;
 
-		float partialLen = 0,intervalCount = 0;
+		float partialLen = 0;
         Pnt3f qt, orient;
-        for (size_t j = 0; j < DIVIDE_LINE; j++) {
-            t += percent;
+        for (size_t j = 0; t<=1; j++) {
             Pnt3f qt0 = qt;
             calcPosition(qt, orient, cpPos, cpOrient, t, type_spline);
             Pnt3f qt1 = qt;
@@ -269,6 +269,7 @@ void TrainView::drawTrack(bool doingShadows) {
 			if (j == 0) { 
 				lpt1pc = qt1 + cross;
 				lpt1mc = qt1 - cross;
+				t += percent;
 				continue;
 			}
 			else if (j == 1) {
@@ -328,16 +329,18 @@ void TrainView::drawTrack(bool doingShadows) {
 				glEnd();
 				lpt1pc = qt1 + cross;
 				lpt1mc = qt1 - cross;
+				t += percent;
 				continue;
 				//
 			}
+			t += percent;
             glLineWidth(5);
             glBegin(GL_LINES);
             if (!doingShadows) {
                 // Spline color.
                 glColor3ub(66, 22, 0);
             }
-
+			//
 			glVertex3f(lpt1pc.x, lpt1pc.y, lpt1pc.z);
 			glVertex3f(qt0.x + cross.x, qt0.y + cross.y, qt0.z + cross.z);
 			
@@ -506,7 +509,7 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
 		glVertex3f(qt.x, qt.y, qt.z);
 		glVertex3f(zz.x, zz.y, zz.z);
 		glEnd();*/
-        std::cout << "TRAIN:" << this->trainPos.x << ", " << this->trainPos.y << ", " << this->trainPos.z << "\n";
+        //std::cout << "TRAIN:" << this->trainPos.x << ", " << this->trainPos.y << ", " << this->trainPos.z << "\n";
 		m->set_base(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
 		m->setPosi(Point3d(this->trainPos.x, this->trainPos.y, this->trainPos.z));
 		glColor3ub(60, 60, 60);
@@ -602,6 +605,8 @@ inline Pnt3f TrainView::Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
 
 	return result;
 }
+
+
 void TrainView::trainCamView(float aspect) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -632,7 +637,7 @@ void TrainView::trainCamView(float aspect) {
     v = rotateMatrix * v;
     Pnt3f up(v.x(), v.y(), v.z());
     //Pnt3f up = this->trainBasisY + direction;
-    std::cout << "LOO:" << this->trainPos.x << ", " << this->trainPos.y << ", " << this->trainPos.z << "\n";
+    //std::cout << "LOO:" << this->trainPos.x << ", " << this->trainPos.y << ", " << this->trainPos.z << "\n";
     gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, up.x, up.y, up.z);
 }
 

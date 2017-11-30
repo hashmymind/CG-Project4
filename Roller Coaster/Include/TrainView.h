@@ -105,6 +105,7 @@ public:
 
 	Pnt3f lpt1pc, lpt1mc;
 
+
     const int DIVIDE_LINE = 1000;
 	const float INTERVAL = 5.0;
 	const float TRACK_WIDTH = 2;
