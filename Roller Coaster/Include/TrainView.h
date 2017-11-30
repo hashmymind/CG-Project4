@@ -109,7 +109,7 @@ public:
 	Pnt3f lpt1pc, lpt1mc;
 
 
-    const int DIVIDE_LINE = 1000;
+    const int DIVIDE_LINE = 700;
 	const float INTERVAL = 5.0;
 	const float TRACK_WIDTH = 2;
 	const QString TRAIN_PATH = "mod/train.obj";

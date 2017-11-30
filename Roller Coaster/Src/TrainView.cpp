@@ -12,7 +12,7 @@ TrainView::~TrainView()
 void TrainView::initializeGL()
 {
 	initializeOpenGLFunctions();
-
+	this->renderTunnels = false;
     GLuint tex;
     loadTexture2D("tex/unnamed.png", tex, true);
     this->trainModel = new Model(TRAIN_PATH, tex, 25, Point3d(0, 5, 0), Pnt3f(60, 60, 60));
@@ -314,7 +314,7 @@ void TrainView::drawTrack(bool doingShadows) {
 				glBegin(GL_QUADS);
 				glColor3ub(0x66, 0xCC, 0xFF);
                 Pnt3f cross2 = cross * 2;
-                Pnt3f offsetQt = qt + Pnt3f(0, -0.4f, 0); // ©¹¤U°¾²¾
+                Pnt3f offsetQt = qt + Pnt3f(0, -0.4f, 0); // ï¿½ï¿½ï¿½Uï¿½ï¿½ï¿½ï¿½
                 const float thickness = 0.4f; // Plane thickness.
                 Pnt3f vtxPlane[8] = {
                     offsetQt + vqt + cross2 + Pnt3f(0,thickness / 2,0),
@@ -580,7 +580,7 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
 
     // Draw.
     if (drawingTrain) {
-        /* ¤T¶b»²§U½u */
+        /* ï¿½Tï¿½bï¿½ï¿½ï¿½Uï¿½u */
 		/*glBegin(GL_LINES);
 		Pnt3f xx, yy, zz;
 		xx = this->trainBasisX * 20;
