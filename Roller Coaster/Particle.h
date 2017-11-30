@@ -44,6 +44,7 @@ public:
 
     void ProcessParticles();
     void DrawParticles();
+    void InitSmokeParticle(float posX, float posY, float posZ);
 private:
     void AddParticle(const Particle& ep);
     void InitParticle(Particle& ep);

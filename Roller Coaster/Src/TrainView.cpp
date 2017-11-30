@@ -130,6 +130,9 @@ void TrainView::paintGL()
     // Particle.
     particle->ProcessParticles();
     particle->DrawParticles();
+    // Smoke.
+    Pnt3f smokePos = this->trainPos + this->trainBasisZ * 9.0f + Pnt3f(0, 10, 0);
+    particle->InitSmokeParticle(smokePos.x , smokePos.y, smokePos.z);
 
 	// this time drawing is for shadows (except for top view)
 	if (this->camera != 1) {
@@ -141,7 +144,7 @@ void TrainView::paintGL()
     // Train run.
     if (this->isrun) {
         this->tPos = this->advanceTrain(this->tPos); // Advance train.
-        //this->trainGravity(); // Gravity.
+        this->trainGravity(); // Gravity.
     }
 }
 

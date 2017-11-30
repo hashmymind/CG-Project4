@@ -105,6 +105,31 @@ void ParticleSystem::DrawParticles() {
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
 }
+void ParticleSystem::InitSmokeParticle(float posX, float posY, float posZ) {
+    Particle ep;
+    ep.b = 120.0f;
+    ep.g = 120.0f;
+    ep.r = 120.0f;
+    ep.life = 0.3f;//初始壽命
+    ep.fade = 0.005f + float(rand() % 21) / 10000.0f;//衰减速度
+    ep.size = rand() % 2 + 1;//大小  
+    ep.xpos = posX;
+    ep.ypos = posY;
+    ep.zpos = posZ;
+    ep.rotX = float(rand() % 360);
+    ep.rotY = float(rand() % 360);
+    ep.rotZ = float(rand() % 360);
+    ep.xspeed = 0.0f;
+    ep.zspeed = 0.0f;
+    ep.yspeed = 0.04f + float(rand() % 75) / 1000.0f;//y方向速度(向上)
+    ep.bFire = 1;
+    ep.nExpl = 0;
+    ep.bAddParts = 1;//設定有尾巴 
+    ep.AddCount = 1.0f;
+    ep.AddSpeed = 0.2f;
+    nOfFires++; //粒子數+1 
+    AddParticle(ep);//加入粒子列表
+}
 void ParticleSystem::AddParticle(const Particle & ep) {
     if (this->Particles.size() < this->MAX_PARTICLES) {
         this->Particles.push_back(ep);
