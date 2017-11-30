@@ -16,7 +16,7 @@ class Model {
 public:
 
     Model() {}
-    Model(const QString &filePath, int _textureID, float _scale, Point3d offset, Pnt3f _rgb);
+    Model(const QString &filePath, int _textureID, float _scale, Point3d offset, Pnt3f _rgb, Point3d _posi = Point3d());
 
 
     void Draw(bool doingShadows = false);

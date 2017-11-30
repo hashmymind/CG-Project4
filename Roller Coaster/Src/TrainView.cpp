@@ -19,9 +19,12 @@ void TrainView::initializeGL()
     this->cars.push_back(new Model(TRAIN_PATH, 0, 25, Point3d(0, 5, 0), Pnt3f(rand() % 255, rand() % 255, rand() % 255)));
     this->cars.push_back(new Model(TRAIN_PATH, 0, 25, Point3d(0, 5, 0), Pnt3f(rand() % 255, rand() % 255, rand() % 255)));
     // Other models.
-    //loadTexture2D("tex/iron2.jpg", tex, true);
     tunnels.push_back(new Tunnel(0.83, "mod/tunnel.obj", 0, 80, Point3d(0,10,0), Pnt3f(60, 60, 120)));
-
+    loadTexture2D("tex/grass.jpg", tex, true);
+    models.push_back(new Model("mod/mount2.obj", tex, 200, Point3d(0, 17, 0), Pnt3f(255, 255, 255), Point3d(175, 0, 0)));
+    models.push_back(new Model("mod/mount2.obj", tex, 500, Point3d(0, 25, 0), Pnt3f(255, 255, 255), Point3d(0, 0, 300)));
+    models.push_back(new Model("mod/mount2.obj", tex, 200, Point3d(0, 17, 0), Pnt3f(255, 255, 255), Point3d(-175, 0, 0)));
+    models.push_back(new Model("mod/mount2.obj", tex, 500, Point3d(0, 25, 0), Pnt3f(255, 255, 255), Point3d(0, 0, -300)));
     // Particle system.
     this->particle = new ParticleSystem;
     loadTexture2D("tex/cloud3.png", this->particle->textureID);
@@ -222,7 +225,7 @@ void TrainView::drawStuff(bool doingShadows)
 
     // draw models
     for (int i = 0; i < models.size(); i++) {
-        models[i]->Draw();
+        models[i]->Draw(doingShadows);
     }
     drawTunnel(doingShadows);
 }

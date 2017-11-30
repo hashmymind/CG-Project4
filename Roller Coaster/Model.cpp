@@ -6,7 +6,7 @@
 
 #include <QtOpenGL/QtOpenGL>
 
-Model::Model(const QString &filePath, int _textureID, float _scale, Point3d _offset, Pnt3f _rgb)
+Model::Model(const QString &filePath, int _textureID, float _scale, Point3d _offset, Pnt3f _rgb, Point3d _posi)
     : m_fileName(QFileInfo(filePath).fileName()) {
     // Default.
     float s = 1.0f; 
@@ -16,6 +16,11 @@ Model::Model(const QString &filePath, int _textureID, float _scale, Point3d _off
     this->scale = _scale;
     this->offset = _offset;
     this->rgb = _rgb;
+    this->posi = _posi;
+    this->bx = Pnt3f(1, 0, 0);
+    this->by = Pnt3f(0, 1, 0);
+    this->bz = Pnt3f(0, 0, 1);
+
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly))
