@@ -113,6 +113,9 @@ public:
 	const float INTERVAL = 5.0;
 	const float TRACK_WIDTH = 2;
 	const QString TRAIN_PATH = "mod/train.obj";
+
+    // ¶}Ãö
+    bool renderTunnels, renderParticles, renderModels, renderCars, useGravity;
 };  
 
 #endif // TRAINVIEW_H  

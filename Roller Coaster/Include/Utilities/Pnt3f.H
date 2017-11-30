@@ -61,6 +61,9 @@ class Pnt3f {
 		// note - the operators above are for Pnt3f*scalar, here we have scalar*Pnt3f
 		friend Pnt3f operator * (const float s, const Pnt3f& p );
 
+        // Scalar.
+        inline Pnt3f Scalar(float sx, float sy, float sz) const;
+
 	public:
 		// for simplicity, we just make this public so everything can access
 		// it. real software engineers would make the internal data private.
@@ -135,4 +138,18 @@ operator*(const Pnt3f& p) const
 	q.y = p.x * z - p.z * x;
 	q.z = p.y * x - p.x * y;
 	return q;
+};
+//*****************************************************************************
+//
+// * cross product
+//=============================================================================
+inline Pnt3f Pnt3f::
+Scalar(float sx, float sy, float sz) const
+//=============================================================================
+{
+    Pnt3f q;
+    q.x = this->x * sx;
+    q.y = this->y * sy;
+    q.z = this->z * sz;
+    return q;
 };

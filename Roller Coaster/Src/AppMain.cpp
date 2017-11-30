@@ -27,6 +27,9 @@ AppMain::AppMain(QWidget *parent)
     this->trainview->tPos = 0;
     this->trainview->verticalDir = 0;
     this->trainview->horizontalDir = 0;
+    // [DEFAULT]
+    this->trainview->renderTunnels = this->trainview->renderCars = this->trainview->renderParticles = this->trainview->renderModels = this->trainview->useGravity = true;
+
     ChangeSpeedOfTrain(49); // Initial velocity.
     //this->trainview->velocity = this->trainview->oriVelocity = this->trainview->minVelocity * powf(powf((this->trainview->maxVelocity / this->trainview->minVelocity), 1.0f / 19.0f), 9.0f);
     this->lockCursor = false;
@@ -157,7 +160,7 @@ bool AppMain::eventFilter(QObject *watched, QEvent *e) {
 			trainview->arcball.computeNow(x,y);
 		};
 	}
-    // Hotkeys.
+    // [HOTKEY]
 	if(e->type() == QEvent::KeyPress){
 		 QKeyEvent *event = static_cast< QKeyEvent*> (e);
          switch (event->key()) {
@@ -181,8 +184,20 @@ bool AppMain::eventFilter(QObject *watched, QEvent *e) {
              case Qt::Key_R:
                  this->SwitchPlayAndPause();
                  break;
-             case Qt::Key_P:
-                 //Particle::ProcessParticles();
+             case Qt::Key_1:
+                 this->trainview->renderTunnels = !this->trainview->renderTunnels;
+                 break;
+             case Qt::Key_2:
+                 this->trainview->renderCars = !this->trainview->renderCars;
+                 break;
+             case Qt::Key_3:
+                 this->trainview->renderModels = !this->trainview->renderModels;
+                 break;
+             case Qt::Key_4:
+                 this->trainview->renderParticles = !this->trainview->renderParticles;
+                 break;
+             case Qt::Key_5:
+                 this->trainview->useGravity = !this->trainview->useGravity;
                  break;
          }
 		
