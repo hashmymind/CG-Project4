@@ -16,10 +16,10 @@ class Model {
 public:
 
     Model() {}
-    Model(const QString &filePath, int _textureID, float _scale, Point3d offset, Pnt3f _rgb);
+    Model(const QString &filePath, int _textureID, float _scale, Point3d offset, Pnt3f _rgb, Point3d _posi = Point3d());
 
 
-    void draw(bool doingShadows = false);
+    void Draw(bool doingShadows = false);
     void setBasis(Pnt3f x, Pnt3f y, Pnt3f z);
 	void setPosi(Point3d);
 	void setScale(int);
@@ -31,7 +31,7 @@ public:
     int points() const { return m_points.size(); }
 
 
-private:
+protected:
     QString m_fileName;
 	QVector<Point3d> ori_m_points;
     QVector<Point3d> m_points;
@@ -51,4 +51,10 @@ private:
     void render(bool useTex = false, bool wireframe = false, bool normals = false) const;
 };
 
+class Tunnel : public Model {
+public:
+    float t;
+
+    Tunnel(float t, const QString &filePath, int _textureID, float _scale, Point3d _offset, Pnt3f _rgb);
+};
 #endif

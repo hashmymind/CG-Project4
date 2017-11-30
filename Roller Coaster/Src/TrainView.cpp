@@ -14,10 +14,17 @@ void TrainView::initializeGL()
 	initializeOpenGLFunctions();
     GLuint tex;
     loadTexture2D("tex/unnamed.png", tex, true);
-    m = new Model(TRAIN_PATH, tex, 25, Point3d(0, 5, 0), Pnt3f(60, 60, 60));
+    this->trainModel = new Model(TRAIN_PATH, tex, 25, Point3d(0, 5, 0), Pnt3f(60, 60, 60));
     // Cars.
     this->cars.push_back(new Model(TRAIN_PATH, 0, 25, Point3d(0, 5, 0), Pnt3f(rand() % 255, rand() % 255, rand() % 255)));
     this->cars.push_back(new Model(TRAIN_PATH, 0, 25, Point3d(0, 5, 0), Pnt3f(rand() % 255, rand() % 255, rand() % 255)));
+    // Other models.
+    tunnels.push_back(new Tunnel(0.83, "mod/tunnel.obj", 0, 80, Point3d(0,10,0), Pnt3f(60, 60, 120)));
+    loadTexture2D("tex/grass.jpg", tex, true);
+    models.push_back(new Model("mod/mount2.obj", tex, 200, Point3d(0, 17, 0), Pnt3f(255, 255, 255), Point3d(175, 0, 0)));
+    models.push_back(new Model("mod/mount2.obj", tex, 500, Point3d(0, 25, 0), Pnt3f(255, 255, 255), Point3d(0, 0, 300)));
+    models.push_back(new Model("mod/mount2.obj", tex, 200, Point3d(0, 17, 0), Pnt3f(255, 255, 255), Point3d(-175, 0, 0)));
+    models.push_back(new Model("mod/mount2.obj", tex, 500, Point3d(0, 25, 0), Pnt3f(255, 255, 255), Point3d(0, 0, -300)));
     // Particle system.
     this->particle = new ParticleSystem;
     loadTexture2D("tex/cloud3.png", this->particle->textureID);
@@ -123,6 +130,9 @@ void TrainView::paintGL()
     // Particle.
     particle->ProcessParticles();
     particle->DrawParticles();
+    // Smoke.
+    Pnt3f smokePos = this->trainPos + this->trainBasisZ * 9.0f + Pnt3f(0, 10, 0);
+    particle->InitSmokeParticle(smokePos.x , smokePos.y, smokePos.z);
 
 	// this time drawing is for shadows (except for top view)
 	if (this->camera != 1) {
@@ -215,6 +225,12 @@ void TrainView::drawStuff(bool doingShadows)
 	drawTrack(doingShadows);
     // draw train.
 	drawTrain(true, doingShadows);// don't draw the train if you're looking out the front window
+
+    // draw models
+    for (int i = 0; i < models.size(); i++) {
+        models[i]->Draw(doingShadows);
+    }
+    drawTunnel(doingShadows);
 }
 void TrainView::calcPosition(Pnt3f& qt, Pnt3f& orient, Pnt3f cpPos[4], Pnt3f cpOrient[4], float t, spline_t& type_spline) {
     switch (type_spline) {
@@ -399,29 +415,7 @@ void TrainView::drawTrack(bool doingShadows) {
                 };
                 Cube wood(vtx, nml);
                 wood.Draw();
-				/*glVertex3f(qt0.x - cross.x, qt0.y - cross.y - 0.1, qt0.z - cross.z);
-				glVertex3f(qt0.x + cross.x, qt0.y + cross.y - 0.1, qt0.z + cross.z);
-				glVertex3f(qt0.x + cross.x + vqt.x, qt0.y + cross.y + vqt.y - 0.1, qt0.z + cross.z + vqt.z);
-				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y + vqt.y - 0.1, qt0.z - cross.z + vqt.z);*/
 				glEnd();
-                /*glBegin(GL_LINES);
-                Pnt3f xx, yy, zz;
-                xx = up * 20;
-                xx = xx + qt0;
-                yy = f * 20;
-                yy = yy + qt0;
-                zz = cross * 20;
-                zz = zz + qt0;
-                glColor3ub(240, 240, 240);
-                glVertex3f(qt0.x, qt0.y, qt0.z);
-                glVertex3f(xx.x, xx.y, xx.z);
-                glColor3ub(0, 0, 0);
-                glVertex3f(qt0.x, qt0.y, qt0.z);
-                glVertex3f(yy.x, yy.y, yy.z);
-                glColor3ub(0, 0, 240);
-                glVertex3f(qt0.x, qt0.y, qt0.z);
-                glVertex3f(zz.x, zz.y, zz.z);
-                glEnd();*/
 
 			}
 			else if (this->track == 2) {
@@ -492,9 +486,9 @@ void TrainView::trainGravity() {
 }
 void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
     if (doingShadows) {
-        m->draw(true);
+        this->trainModel->Draw(true);
         for (int i = 0; i < cars.size(); i++) {
-            this->cars[i]->draw(true);
+            this->cars[i]->Draw(true);
         }
         return;
     }
@@ -522,12 +516,12 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
     Pnt3f carTBY;
     Pnt3f carTBZ;
 	float totalArclen = 0;
-	for (int i = 0; i < this->arclen.size(); ++i) totalArclen += this->arclen[i];
+    for (int i = 0; i < this->arclen.size(); ++i) { totalArclen += this->arclen[i]; }
 	
 	float gap = 25;
 	for (int i = 0; i < this->cars.size(); ++i) {
 		float posi = this->tPos,gapLeft = (i+1)*gap;
-		while (gapLeft>0.00001) {
+		while (gapLeft > 0.00001) {
 			while (posi < 0.0)posi += 1;
 			float tmp = posi*this->m_pTrack->points.size();
 			size_t k;
@@ -558,19 +552,17 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
         carTBZ.normalize();
         // Cross get X.
         carTBX = carTBZ * carTBY;
-        this->trainBasisX.normalize();
+        carTBX.normalize();
         // Cross get Y.(cuz orient is not real Y.)
         carTBY = carTBX * carTBZ;
         carTBY.normalize();
         if (drawingTrain) {
             this->cars[i]->setBasis(carTBX, carTBY, carTBZ);
             this->cars[i]->setPosi(Point3d(carQT.x, carQT.y, carQT.z));
-            this->cars[i]->draw();
+            this->cars[i]->Draw();
         }
 
 	}
-
-
 
 	//*/
 
@@ -594,11 +586,32 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
 		glVertex3f(qt.x, qt.y, qt.z);
 		glVertex3f(zz.x, zz.y, zz.z);
 		glEnd();*/
+		this->trainModel->setBasis(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
+		this->trainModel->setPosi(Point3d(this->trainPos.x, this->trainPos.y, this->trainPos.z));
+		this->trainModel->Draw();
+    }
+}
 
-		
-		m->setBasis(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
-		m->setPosi(Point3d(this->trainPos.x, this->trainPos.y, this->trainPos.z));
-		m->draw();
+void TrainView::drawTunnel(bool doingShadows) {
+    Pnt3f qt0, qt1, orient, bx, by, bz;
+    for (int i = 0; i < this->tunnels.size(); i++) {
+        this->calcTrain(qt0, orient, this->tunnels[i]->t);
+        // Update train direction.
+        by = orient;
+        by.normalize();
+        float nextT = advanceTrain(this->tunnels[i]->t);
+        calcTrain(qt1, orient, nextT);
+        bz = qt1 - qt0;
+        bz.normalize();
+        // Cross get X.
+        bx = bz * by;
+        bx.normalize();
+        // Cross get Y.(cuz orient is not real Y.)
+        by = bx * bz;
+        by.normalize();
+        this->tunnels[i]->setPosi(Point3d(qt0.x, qt0.y, qt0.z));
+        this->tunnels[i]->setBasis(bx, by, bz);
+        this->tunnels[i]->Draw(doingShadows);
     }
 }
 

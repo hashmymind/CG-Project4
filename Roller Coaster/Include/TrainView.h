@@ -71,6 +71,7 @@ private:
     void calcTrain(Pnt3f& qt, Pnt3f& orient, float t);
     void drawTrack(bool);
     void drawTrain(bool drawingTrain, bool doingShadows);
+    void drawTunnel(bool);
     void trainCamView(float);
 
     void loadTexture2D(QString str, GLuint &textureID, bool repeat = false);
@@ -95,11 +96,13 @@ public:
 
     float tPos; // 0 ~ 1 代表在整個軌道迴圈的位置
 	vector<float> arclen; // use after drawTrack was called
-    Model *m;
+    Model *trainModel;
 	vector<Model*> cars;
     Pnt3f trainPos;
     Pnt3f trainBasisX, trainBasisY, trainBasisZ;
     float verticalDir, horizontalDir;
+    vector<Tunnel*> tunnels;
+    vector<Model*> models;
 
     ParticleSystem* particle;
 
