@@ -524,10 +524,27 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
 	float totalArclen = 0;
 	for (int i = 0; i < this->arclen.size(); ++i) totalArclen += this->arclen[i];
 	
-	float intervalT = 25/ totalArclen;// ¶¡¶Z25
+	float gap = 25;
 	for (int i = 0; i < this->cars.size(); ++i) {
-		float posi = this->tPos - (i + 1)*intervalT;
-		while (posi < 0)posi += 1;
+		float posi = this->tPos,gapLeft = (i+1)*gap;
+		while (gapLeft>0.00001) {
+			while (posi < 0.0)posi += 1;
+			float tmp = posi*this->m_pTrack->points.size();
+			size_t k;
+			for (k = 0; tmp > 1; tmp -= 1) { k++; }
+			float distLeft = tmp*this->arclen[k];
+			if (distLeft > gapLeft) {
+				posi -= (gapLeft / this->arclen[k])/ this->m_pTrack->points.size();
+				gapLeft = 0;
+			}
+			else {
+				posi = float(k)/ this->m_pTrack->points.size();
+				posi -= 0.00000001;
+				gapLeft -= distLeft;
+			}
+		}
+		while (posi > 1.0)posi -= 1;
+		while (posi < 0.0)posi += 1;
 		calcTrain(qt, orient, posi);
 
         carQT = qt;
