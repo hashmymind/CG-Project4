@@ -609,7 +609,7 @@ void TrainView::drawTunnel(bool doingShadows) {
         // Cross get Y.(cuz orient is not real Y.)
         by = bx * bz;
         by.normalize();
-        this->tunnels[i]->setPosi(Point3d(qt0.x, qt0.y, qt0.z));
+        this->tunnels[i]->setPosi(Point3d(qt0.x, qt0.y-5, qt0.z));
         this->tunnels[i]->setBasis(bx, by, bz);
         this->tunnels[i]->Draw(doingShadows);
     }
