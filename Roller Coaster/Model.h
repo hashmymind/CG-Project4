@@ -1,6 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
-
+#pragma once
 #include <QtCore/QString>
 #include <QtCore/QVector>
 
@@ -9,16 +9,18 @@
 #include "Point3d.h"
 #include "Utilities/Pnt3f.H"
 #include "ControlPoint.H"
-
+struct UV {
+    float x, y;
+};
 class Model {
 public:
 
     Model() {}
-    Model(const QString &filePath, int s, Point3d p);
+    Model(const QString &filePath, int _textureID, float _scale, Point3d offset, Pnt3f _rgb);
 
 
-    void draw();
-    void set_base(Pnt3f x, Pnt3f y, Pnt3f z);
+    void draw(bool doingShadows = false);
+    void setBasis(Pnt3f x, Pnt3f y, Pnt3f z);
 	void setPosi(Point3d);
 	void setScale(int);
 	void setOffset(Point3d);
@@ -38,12 +40,15 @@ private:
     QVector<int> m_pointIndices;
     QVector<Point3d> n_points;
     QVector<Point3d> n_normals;
-	int scale;
+    QVector<UV> uvs;
+    int textureID;
+
+	float scale;
 	Point3d posi;
 	Point3d offset;
 	Pnt3f bx, by, bz;
-
-    void render(bool wireframe = false, bool normals = false) const;
+    Pnt3f rgb;
+    void render(bool useTex = false, bool wireframe = false, bool normals = false) const;
 };
 
 #endif

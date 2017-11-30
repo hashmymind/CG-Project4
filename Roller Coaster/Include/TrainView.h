@@ -61,7 +61,7 @@ public:
 
 	void initializeGL();
 
-    float advanceTrain();
+    float advanceTrain(float t);
     void trainGravity();
 private:
     inline Pnt3f Linear(Pnt3f p1, Pnt3f p2, float t);
@@ -73,7 +73,7 @@ private:
     void drawTrain(bool drawingTrain, bool doingShadows);
     void trainCamView(float);
 
-    void loadTexture2D(QString str, GLuint &textureID);
+    void loadTexture2D(QString str, GLuint &textureID, bool repeat = false);
 
 public:
 	ArcBallCam		arcball;			// keep an ArcBall for the UI
