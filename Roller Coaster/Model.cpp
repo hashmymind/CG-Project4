@@ -6,8 +6,17 @@
 
 #include <QtOpenGL/QtOpenGL>
 
-Model::Model(const QString &filePath, int s, Point3d p)
+Model::Model(const QString &filePath, int _textureID, float _scale, Point3d _offset, Pnt3f _rgb)
     : m_fileName(QFileInfo(filePath).fileName()) {
+    // Default.
+    float s = 1.0f; 
+    Point3d p(0, 0, 0);
+
+    this->textureID = _textureID;
+    this->scale = _scale;
+    this->offset = _offset;
+    this->rgb = _rgb;
+
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly))
         return;
@@ -32,7 +41,9 @@ Model::Model(const QString &filePath, int s, Point3d p)
             }
             m_points << p;
         } else if (id == "vt") {
-
+            UV uv;
+            ts >> uv.x >> uv.y;
+            uvs << uv;
         } else if (id == "f" || id == "fo") {
             QVarLengthArray<int, 4> p;
 
@@ -89,23 +100,28 @@ Model::Model(const QString &filePath, int s, Point3d p)
         n_normals.push_back(m_normals[i]);
     }
 }
-#include<iostream>
-void Model::draw() {
+void Model::draw(bool doingShadows) {
     glPushMatrix();
+    
     glTranslatef(this->posi.x, this->posi.y, this->posi.z);
     // Change basis.
     const float fM[4 * 4] = { this->bx.x, this->bx.y, this->bx.z, 0, this->by.x, this->by.y, this->by.z, 0, this->bz.x, this->bz.y, this->bz.z, 0, 0, 0, 0, 1 };
     glMultMatrixf(fM);
     glTranslatef(this->offset.x, this->offset.y, this->offset.z);
     glScalef(this->scale, this->scale, this->scale);
-    this->render();
+    if (!doingShadows) {
+        glColor3ub(this->rgb.x, this->rgb.y, this->rgb.z);
+        this->render(this->textureID);
+    } else {
+        this->render(false);
+    }
     glPopMatrix();
 }
 
 void Model::setPosi(Point3d p) {
     this->posi = p;
 }
-void Model::set_base(Pnt3f x, Pnt3f y, Pnt3f z) {
+void Model::setBasis(Pnt3f x, Pnt3f y, Pnt3f z) {
     this->bx = x;
     this->by = y;
     this->bz = z;
@@ -119,7 +135,7 @@ void Model::setOffset(Point3d ofst) {
 }
 
 
-void Model::render(bool wireframe, bool normals) const {
+void Model::render(bool useTex, bool wireframe, bool normals) const {
     //glEnable(GL_DEPTH_TEST);
     glEnableClientState(GL_VERTEX_ARRAY);
     if (wireframe) {
@@ -131,14 +147,29 @@ void Model::render(bool wireframe, bool normals) const {
         glEnable(GL_COLOR_MATERIAL);
         glShadeModel(GL_SMOOTH);*/
 
-        glEnable(GL_NORMALIZE);
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, (float *) n_points.data());
-        glNormalPointer(GL_FLOAT, 0, (float *) n_normals.data());
-        glDrawElements(GL_TRIANGLES, m_pointIndices.size(), GL_UNSIGNED_INT, m_pointIndices.data());
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisable(GL_NORMALIZE);
-
+        if (useTex) {
+            glEnable(GL_NORMALIZE);
+            glEnable(GL_TEXTURE_2D);
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            glEnableClientState(GL_NORMAL_ARRAY);
+            glTexCoordPointer(2, GL_FLOAT, 0, (float *) uvs.data());
+            glBindTexture(GL_TEXTURE_2D, this->textureID);
+            glVertexPointer(3, GL_FLOAT, 0, (float *) n_points.data());
+            glNormalPointer(GL_FLOAT, 0, (float *) n_normals.data());
+            glDrawElements(GL_TRIANGLES, m_pointIndices.size(), GL_UNSIGNED_INT, m_pointIndices.data());
+            glDisableClientState(GL_NORMAL_ARRAY);
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_NORMALIZE);
+        } else {
+            glEnable(GL_NORMALIZE);
+            glEnableClientState(GL_NORMAL_ARRAY);
+            glVertexPointer(3, GL_FLOAT, 0, (float *) n_points.data());
+            glNormalPointer(GL_FLOAT, 0, (float *) n_normals.data());
+            glDrawElements(GL_TRIANGLES, m_pointIndices.size(), GL_UNSIGNED_INT, m_pointIndices.data());
+            glDisableClientState(GL_NORMAL_ARRAY);
+            glDisable(GL_NORMALIZE);
+        }
         /*glDisable(GL_COLOR_MATERIAL);
         glDisable(GL_LIGHT0);
         glDisable(GL_LIGHTING);*/

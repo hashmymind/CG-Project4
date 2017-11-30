@@ -40,8 +40,6 @@ public:
 
 	bool canpan;
 	bool isHover;
-    // Train run.
-    QTimer *timer;
 private:
     // Mouse offset.
     float mouseX, mouseY, mOffsetX, mOffsetY;
@@ -94,8 +92,6 @@ private:
         void ChangeSpeedSlow();
         void ChangeSpeedNormal();
         void ChangeSpeedFast();
-
-        void TrainRun();
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *e); 

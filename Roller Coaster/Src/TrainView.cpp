@@ -1,4 +1,5 @@
-#include "TrainView.h"  
+#include "TrainView.h"
+#include "Cube.h"
 #include<iostream>
 
 TrainView::TrainView(QWidget *parent) :  
@@ -11,14 +12,15 @@ TrainView::~TrainView()
 void TrainView::initializeGL()
 {
 	initializeOpenGLFunctions();
-	m = new Model(QString("mod/train.obj"), 1, Point3d(0, 0, 0));
-	m->setScale(25);
-	m->setOffset(Point3d(0, 5, 0));
-
-	this->cars.push_back(new Model(TRAIN_PATH, 25, Point3d()));
-	this->cars.push_back(new Model(TRAIN_PATH, 25, Point3d()));
+    GLuint tex;
+    loadTexture2D("tex/unnamed.png", tex, true);
+    m = new Model(TRAIN_PATH, tex, 25, Point3d(0, 5, 0), Pnt3f(60, 60, 60));
+    // Cars.
+    this->cars.push_back(new Model(TRAIN_PATH, 0, 25, Point3d(0, 5, 0), Pnt3f(rand() % 255, rand() % 255, rand() % 255)));
+    this->cars.push_back(new Model(TRAIN_PATH, 0, 25, Point3d(0, 5, 0), Pnt3f(rand() % 255, rand() % 255, rand() % 255)));
+    // Particle system.
     this->particle = new ParticleSystem;
-    loadTexture2D("cloud3.png", this->particle->textureID);
+    loadTexture2D("tex/cloud3.png", this->particle->textureID);
 }
 void TrainView:: resetArcball()
 	//========================================================================
@@ -128,6 +130,12 @@ void TrainView::paintGL()
 		drawStuff(true);
 		unsetupShadows();
 	}
+
+    // Train run.
+    if (this->isrun) {
+        this->tPos = this->advanceTrain(this->tPos); // Advance train.
+        this->trainGravity(); // Gravity.
+    }
 }
 
 //************************************************************************
@@ -366,11 +374,54 @@ void TrainView::drawTrack(bool doingShadows) {
 				intervalCount = 0;
 				Pnt3f vqt = (2.0 / dist) * (qt0 - qt1);
                 cross = cross * 1.4f;
-				glVertex3f(qt0.x - cross.x, qt0.y - cross.y - 0.1, qt0.z - cross.z);
+                const float WOOD_HEIGHT = 1.0f;
+                Pnt3f vtx[8] = {
+                    qt0 + vqt + cross + Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + vqt - cross + Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 - cross + Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + cross + Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + cross - Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 - cross - Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + vqt - cross - Pnt3f(0,WOOD_HEIGHT / 2,0),
+                    qt0 + vqt +  cross - Pnt3f(0,WOOD_HEIGHT / 2,0)
+                };
+                // forward 
+                Pnt3f f = (qt1 - qt0);
+                f.normalize();
+                cross.normalize();
+                // up.
+                Pnt3f up = cross * f;
+                up.normalize();
+                Pnt3f nml[3] = { //UFR
+                    up,
+                    f,
+                    cross
+                };
+                Cube wood(vtx, nml);
+                wood.Draw();
+				/*glVertex3f(qt0.x - cross.x, qt0.y - cross.y - 0.1, qt0.z - cross.z);
 				glVertex3f(qt0.x + cross.x, qt0.y + cross.y - 0.1, qt0.z + cross.z);
 				glVertex3f(qt0.x + cross.x + vqt.x, qt0.y + cross.y + vqt.y - 0.1, qt0.z + cross.z + vqt.z);
-				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y + vqt.y - 0.1, qt0.z - cross.z + vqt.z);
+				glVertex3f(qt0.x - cross.x+ vqt.x, qt0.y - cross.y + vqt.y - 0.1, qt0.z - cross.z + vqt.z);*/
 				glEnd();
+                /*glBegin(GL_LINES);
+                Pnt3f xx, yy, zz;
+                xx = up * 20;
+                xx = xx + qt0;
+                yy = f * 20;
+                yy = yy + qt0;
+                zz = cross * 20;
+                zz = zz + qt0;
+                glColor3ub(240, 240, 240);
+                glVertex3f(qt0.x, qt0.y, qt0.z);
+                glVertex3f(xx.x, xx.y, xx.z);
+                glColor3ub(0, 0, 0);
+                glVertex3f(qt0.x, qt0.y, qt0.z);
+                glVertex3f(yy.x, yy.y, yy.z);
+                glColor3ub(0, 0, 240);
+                glVertex3f(qt0.x, qt0.y, qt0.z);
+                glVertex3f(zz.x, zz.y, zz.z);
+                glEnd();*/
 
 			}
 			else if (this->track == 2) {
@@ -418,8 +469,7 @@ void TrainView::calcTrain(Pnt3f& qt, Pnt3f& orient, float t) {
 }
 
 // Return the next position.
-float TrainView::advanceTrain() {
-    float t = this->tPos;
+float TrainView::advanceTrain(float t) {
     float tt = t * m_pTrack->points.size();
     size_t i;
     for (i = 0; tt > 1; tt -= 1) { i++; }
@@ -442,7 +492,10 @@ void TrainView::trainGravity() {
 }
 void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
     if (doingShadows) {
-        m->draw();
+        m->draw(true);
+        for (int i = 0; i < cars.size(); i++) {
+            this->cars[i]->draw(true);
+        }
         return;
     }
     Pnt3f qt, orient;
@@ -452,7 +505,7 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
     this->trainBasisY = orient;
     this->trainBasisY.normalize();
     // Update train direction.
-    float nextT = advanceTrain();
+    float nextT = advanceTrain(this->tPos);
     calcTrain(qt, orient, nextT);
     this->trainBasisZ = qt - this->trainPos;
     this->trainBasisZ.normalize();
@@ -463,34 +516,49 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
     this->trainBasisY = this->trainBasisX * this->trainBasisZ;
     this->trainBasisY.normalize();
 
-	/*// do the things above to cars
-	vector<Pnt3f> carQT(cars.size());
-	vector<Pnt3f> carOrient(cars.size());
-	vector<Pnt3f> carTBX(cars.size());
-	vector<Pnt3f> carTBY(cars.size());
-	vector<Pnt3f> carTBZ(cars.size());
-	float intervalT = 0.3;
+	// do the things above to cars
+    Pnt3f carQT;
+    Pnt3f carTBX;
+    Pnt3f carTBY;
+    Pnt3f carTBZ;
+	float totalArclen = 0;
+	for (int i = 0; i < this->arclen.size(); ++i) totalArclen += this->arclen[i];
+	
+	float intervalT = 25/ totalArclen;// ¶¡¶Z25
 	for (int i = 0; i < this->cars.size(); ++i) {
 		float posi = this->tPos - (i + 1)*intervalT;
 		while (posi < 0)posi += 1;
-		calcTrain(carQT[i], carOrient[i], posi);
-		// Update cureent train coordinate.
-		carTBY[i] = carQT[i];
-		carTBY[i].normalize();
-		//[todo]
-		// Update train direction.
-		// Cross get X.
-		// Cross get Y.(cuz orient is not real Y.)
+		calcTrain(qt, orient, posi);
+
+        carQT = qt;
+        carTBY = orient;
+        carTBY.normalize();
+
+        // Update train direction.
+        nextT = advanceTrain(posi);
+        calcTrain(qt, orient, nextT);
+        carTBZ = qt - carQT;
+        carTBZ.normalize();
+        // Cross get X.
+        carTBX = carTBZ * carTBY;
+        this->trainBasisX.normalize();
+        // Cross get Y.(cuz orient is not real Y.)
+        carTBY = carTBX * carTBZ;
+        carTBY.normalize();
+        if (drawingTrain) {
+            this->cars[i]->setBasis(carTBX, carTBY, carTBZ);
+            this->cars[i]->setPosi(Point3d(carQT.x, carQT.y, carQT.z));
+            this->cars[i]->draw();
+        }
+
 	}
 
 
 
-	//
-	*/
+	//*/
 
     // Draw.
     if (drawingTrain) {
-		glColor3ub(60, 60, 60);
 		/*glBegin(GL_LINES);
 		Pnt3f xx, yy, zz;
 		xx = this->trainBasisX * 20;
@@ -509,10 +577,8 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
 		glVertex3f(qt.x, qt.y, qt.z);
 		glVertex3f(zz.x, zz.y, zz.z);
 		glEnd();*/
-        //std::cout << "TRAIN:" << this->trainPos.x << ", " << this->trainPos.y << ", " << this->trainPos.z << "\n";
-		m->set_base(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
+		m->setBasis(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
 		m->setPosi(Point3d(this->trainPos.x, this->trainPos.y, this->trainPos.z));
-		glColor3ub(60, 60, 60);
 		m->draw();
     }
 }
@@ -637,11 +703,10 @@ void TrainView::trainCamView(float aspect) {
     v = rotateMatrix * v;
     Pnt3f up(v.x(), v.y(), v.z());
     //Pnt3f up = this->trainBasisY + direction;
-    //std::cout << "LOO:" << this->trainPos.x << ", " << this->trainPos.y << ", " << this->trainPos.z << "\n";
     gluLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z, up.x, up.y, up.z);
 }
 
-void TrainView::loadTexture2D(QString str, GLuint &textureID) {
+void TrainView::loadTexture2D(QString str, GLuint &textureID, bool repeat) {
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -654,5 +719,9 @@ void TrainView::loadTexture2D(QString str, GLuint &textureID) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, opengl_grass.width(), opengl_grass.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, opengl_grass.bits());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    if (repeat) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
     glDisable(GL_TEXTURE_2D);
 }
