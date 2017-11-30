@@ -1,4 +1,4 @@
-#include "TrainView.h"
+Ôªø#include "TrainView.h"
 #include "Cube.h"
 #include<iostream>
 
@@ -444,7 +444,7 @@ void TrainView::drawTrack(bool doingShadows) {
 		this->arclen[i] = partialLen;
     }
 }
-// ∂«§J0~1™∫º∆ ¶^∂«train™∫Æyº–∏Í∞T
+// ÂÇ≥ÂÖ•0~1ÁöÑÊï∏ ÂõûÂÇ≥trainÁöÑÂ∫ßÊ®ôË≥áË®ä
 void TrainView::calcTrain(Pnt3f& qt, Pnt3f& orient, float t) {
     spline_t type_spline = (spline_t) this->curve;
     t *= m_pTrack->points.size();
@@ -485,7 +485,7 @@ void TrainView::trainGravity() {
     this->velocity -= this->trainBasisZ.y * this->G;
     if (this->velocity < this->oriVelocity * this->minimumVelocityRate) {
         this->velocity = this->oriVelocity * this->minimumVelocityRate;
-    } else if (this->velocity > this->oriVelocity) { // ™˝§O
+    } else if (this->velocity > this->oriVelocity) { // ÈòªÂäõ
       this->velocity -= this->G / 6;
       if (this->velocity < this->oriVelocity) { this->velocity = this->oriVelocity; }
       }
@@ -594,6 +594,8 @@ void TrainView::drawTrain(bool drawingTrain, bool doingShadows) {
 		glVertex3f(qt.x, qt.y, qt.z);
 		glVertex3f(zz.x, zz.y, zz.z);
 		glEnd();*/
+
+		
 		m->setBasis(this->trainBasisX, this->trainBasisY, this->trainBasisZ);
 		m->setPosi(Point3d(this->trainPos.x, this->trainPos.y, this->trainPos.z));
 		m->draw();
@@ -707,7 +709,7 @@ void TrainView::trainCamView(float aspect) {
     direction.x = v.x();
     direction.y = v.y();
     direction.z = v.z();
-    // ©T©w¶Ï≤æ
+    // Âõ∫ÂÆö‰ΩçÁßª
     Pnt3f offset;
     const float OFFSET_X = 0.0f;
     const float OFFSET_Y = 10.0f;
