@@ -100,9 +100,8 @@ Model::Model(const QString &filePath, int _textureID, float _scale, Point3d _off
         n_normals.push_back(m_normals[i]);
     }
 }
-void Model::draw(bool doingShadows) {
+void Model::Draw(bool doingShadows) {
     glPushMatrix();
-    
     glTranslatef(this->posi.x, this->posi.y, this->posi.z);
     // Change basis.
     const float fM[4 * 4] = { this->bx.x, this->bx.y, this->bx.z, 0, this->by.x, this->by.y, this->by.z, 0, this->bz.x, this->bz.y, this->bz.z, 0, 0, 0, 0, 1 };
@@ -184,4 +183,9 @@ void Model::render(bool useTex, bool wireframe, bool normals) const {
     }
     glDisableClientState(GL_VERTEX_ARRAY);
     //glDisable(GL_DEPTH_TEST);
+}
+
+Tunnel::Tunnel(float t, const QString & filePath, int _textureID, float _scale, Point3d _offset, Pnt3f _rgb) 
+    : Model(filePath, _textureID, _scale, _offset, _rgb){
+    this->t = t;
 }
