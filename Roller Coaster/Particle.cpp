@@ -4,8 +4,8 @@ ParticleSystem::ParticleSystem() {
     this->nOfFires = 0;
     this->Tick1 = this->Tick2 = GetTickCount();
     this->DTick = 0;
-    this->MAX_PARTICLES = 10000;
-    this->MAX_FIRES = 100;
+    this->MAX_PARTICLES = 1000;
+    this->MAX_FIRES = 20;
 }
 void ParticleSystem::ProcessParticles() {
     Tick1 = Tick2;
@@ -122,12 +122,12 @@ void ParticleSystem::InitSmokeParticle(float posX, float posY, float posZ) {
     ep.xspeed = 0.0f;
     ep.zspeed = 0.0f;
     ep.yspeed = 0.04f + float(rand() % 75) / 1000.0f;//y方向速度(向上)
-    ep.bFire = 1;
+    ep.bFire = 0;
     ep.nExpl = 0;
     ep.bAddParts = 1;//設定有尾巴 
     ep.AddCount = 1.0f;
     ep.AddSpeed = 0.2f;
-    nOfFires++; //粒子數+1 
+    //nOfFires++; //粒子數+1 
     AddParticle(ep);//加入粒子列表
 }
 void ParticleSystem::AddParticle(const Particle & ep) {

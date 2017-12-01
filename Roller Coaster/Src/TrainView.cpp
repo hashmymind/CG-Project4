@@ -12,7 +12,6 @@ TrainView::~TrainView()
 void TrainView::initializeGL()
 {
 	initializeOpenGLFunctions();
-	this->renderTunnels = false;
     GLuint tex;
     loadTexture2D("tex/unnamed.png", tex, true);
     this->trainModel = new Model(TRAIN_PATH, tex, 25, Point3d(0, 5, 0), Pnt3f(60, 60, 60));

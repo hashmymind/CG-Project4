@@ -29,7 +29,6 @@ AppMain::AppMain(QWidget *parent)
     this->trainview->horizontalDir = 0;
     // [DEFAULT]
     this->trainview->renderTunnels = this->trainview->renderCars = this->trainview->renderParticles = this->trainview->renderModels = this->trainview->useGravity = true;
-
     ChangeSpeedOfTrain(49); // Initial velocity.
     //this->trainview->velocity = this->trainview->oriVelocity = this->trainview->minVelocity * powf(powf((this->trainview->maxVelocity / this->trainview->minVelocity), 1.0f / 19.0f), 9.0f);
     this->lockCursor = false;
