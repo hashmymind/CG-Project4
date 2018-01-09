@@ -4,7 +4,7 @@
 #include <QtCore/QVarLengthArray>
 
 #include <QtOpenGL/QtOpenGL>
-GLint width = 500,height = 500,length =500;
+GLint width = 2000,height = 2000,length = 2000;
 Skybox::Skybox() {
 	// init texID
 	this->texID.resize(6);
