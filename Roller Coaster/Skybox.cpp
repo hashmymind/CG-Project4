@@ -23,6 +23,16 @@ void Skybox::render() {
 	glTexCoord2d(0.0, 0.0f);	glVertex3f(width, height, length);	// Bottom Right Of The Quad (Top)
 	glEnd();
 
+	glBindTexture(GL_TEXTURE_2D, this->texID[1]);
+	glBegin(GL_QUADS);
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glTexCoord2d(1.0f, 0.0f);	glVertex3f(width, -height, -length);	// Top Right Of The Quad (Top)
+	glTexCoord2d(1.0f, 1.0f);	glVertex3f(-width, -height, -length);	// Top Left Of The Quad (Top)
+	glTexCoord2d(0.0, 1.0f);	glVertex3f(-width, -height, length);	// Bottom Left Of The Quad (Top)
+	glTexCoord2d(0.0, 0.0f);	glVertex3f(width, -height, length);	// Bottom Right Of The Quad (Top)
+	glEnd();
+
+
 	glBindTexture(GL_TEXTURE_2D, this->texID[2]);
 	glBegin(GL_QUADS);
 	glNormal3f(0.0f, 0.0f, -1.0f);
