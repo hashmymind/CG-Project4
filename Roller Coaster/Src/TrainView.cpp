@@ -734,7 +734,7 @@ inline Pnt3f TrainView::Cubic(Pnt3f p0, Pnt3f p1, Pnt3f p2, Pnt3f p3, float t) {
 void TrainView::trainCamView(float aspect) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60, aspect, 1, 2000);
+    gluPerspective(60, aspect, 1, 10000);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
