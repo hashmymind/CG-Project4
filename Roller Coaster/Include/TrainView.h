@@ -14,6 +14,8 @@
 #include "Track.H"
 #include "Model.h"
 #include "Particle.h"
+#include "Skybox.h"
+
 
 using std::vector;
 
@@ -105,6 +107,7 @@ public:
     vector<Model*> models;
 
     ParticleSystem* particle;
+	Skybox *skybox;
 
 	Pnt3f lpt1pc, lpt1mc;
 

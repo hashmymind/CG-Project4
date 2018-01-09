@@ -31,6 +31,15 @@ void TrainView::initializeGL()
     // Particle system.
     this->particle = new ParticleSystem;
     loadTexture2D("tex/cloud3.png", this->particle->textureID);
+
+	// skybox
+	this->skybox = new Skybox;
+	loadTexture2D("tex/ypos.png", this->skybox->texID[0]);
+	loadTexture2D("tex/yneg.png", this->skybox->texID[1]);
+	loadTexture2D("tex/zneg.png", this->skybox->texID[2]);
+	loadTexture2D("tex/zpos.png", this->skybox->texID[3]);
+	loadTexture2D("tex/xpos.png", this->skybox->texID[4]);
+	loadTexture2D("tex/xneg.png", this->skybox->texID[5]);
 }
 void TrainView:: resetArcball()
 	//========================================================================
@@ -145,6 +154,11 @@ void TrainView::paintGL()
 		drawStuff(true);
 		unsetupShadows();
 	}
+
+
+	//
+	
+	this->skybox->render();
 
     // Train run.
     if (this->isrun) {

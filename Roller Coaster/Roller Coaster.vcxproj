@@ -182,6 +182,7 @@
     </ClCompile>
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Src\AppMain.cpp" />
     <ClCompile Include="Src\ControlPoint.cpp" />
     <ClCompile Include="Src\main.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Point3d.h" />
+    <ClInclude Include="Skybox.h" />
     <CustomBuild Include="Include\TrainView.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
