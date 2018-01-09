@@ -127,6 +127,7 @@ void TrainView::paintGL()
 	//*********************************************************************
 	setupFloor();
 	glDisable(GL_LIGHTING);
+    this->skybox->render();
 	drawFloor(200,10);
 
 
@@ -155,10 +156,6 @@ void TrainView::paintGL()
 		unsetupShadows();
 	}
 
-
-	//
-	
-	this->skybox->render();
 
     // Train run.
     if (this->isrun) {
