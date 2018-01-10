@@ -191,6 +191,7 @@
     <ClCompile Include="Src\Utilities\3DUtils.cpp" />
     <ClCompile Include="Src\Utilities\ArcBallCam.cpp" />
     <ClCompile Include="Src\Utilities\Pnt3f.cpp" />
+    <ClCompile Include="Wave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="AppMain.ui">
@@ -223,6 +224,7 @@
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Point3d.h" />
     <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Wave.h" />
     <CustomBuild Include="Include\TrainView.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

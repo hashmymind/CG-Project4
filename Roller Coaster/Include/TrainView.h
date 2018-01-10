@@ -15,6 +15,7 @@
 #include "Model.h"
 #include "Particle.h"
 #include "Skybox.h"
+#include "Wave.h"
 
 
 using std::vector;
@@ -105,6 +106,7 @@ public:
     float verticalDir, horizontalDir;
     vector<Tunnel*> tunnels;
     vector<Model*> models;
+	vector<Wave*> waves;
 
     ParticleSystem* particle;
 	Skybox *skybox;

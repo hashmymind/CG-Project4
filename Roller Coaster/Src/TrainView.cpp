@@ -27,7 +27,7 @@ void TrainView::initializeGL()
     models.push_back(new Model("mod/mount2.obj", tex, 500, Point3d(0, 25, 0), Pnt3f(255, 255, 255), Point3d(0, 0, 300)));
     models.push_back(new Model("mod/mount2.obj", tex, 200, Point3d(0, 17, 0), Pnt3f(255, 255, 255), Point3d(-175, 0, 0)));
     models.push_back(new Model("mod/mount2.obj", tex, 500, Point3d(0, 25, 0), Pnt3f(255, 255, 255), Point3d(0, 0, -300)));
-
+	
     // Particle system.
     this->particle = new ParticleSystem;
     loadTexture2D("tex/cloud3.png", this->particle->textureID);
@@ -40,6 +40,10 @@ void TrainView::initializeGL()
 	loadTexture2D("tex/zpos.png", this->skybox->texID[3]);
 	loadTexture2D("tex/xpos.png", this->skybox->texID[4]);
 	loadTexture2D("tex/xneg.png", this->skybox->texID[5]);
+
+	// wave
+	loadTexture2D("tex/wave.jpg", tex);
+	waves.push_back(new Wave(100,100,0,2,0,1,5,tex));
 }
 void TrainView:: resetArcball()
 	//========================================================================
@@ -128,6 +132,7 @@ void TrainView::paintGL()
 	setupFloor();
 	glDisable(GL_LIGHTING);
     this->skybox->render();
+	this->waves[0]->render();
 	drawFloor(200,10);
 
 
