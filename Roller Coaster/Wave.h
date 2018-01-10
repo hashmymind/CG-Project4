@@ -8,5 +8,4 @@ private:
 	int _width, _length,_baseX,_baseY,_baseZ,_maxiHeigth, _interval;
 	float _t;
 	GLuint _texID;
-
 };
